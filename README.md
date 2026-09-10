@@ -1,5 +1,7 @@
 # 长程智能体研究资料
 
+
+
 本目录整理《Towards Long-Horizon Agents: A Survey》和配套仓库的中文研究笔记，并把综述中的开放方向转成可执行的问题清单。
 
 - [综述详细总结](01_综述详细总结.md)：按 Foundation、Evolution、Harness、Optimization、Application、Frontier 六部分解释论文的概念、方法、边界和批判性阅读要点。
