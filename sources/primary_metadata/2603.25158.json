@@ -1,0 +1,13 @@
+{
+  "arxiv_id": "2603.25158",
+  "url": "https://arxiv.org/abs/2603.25158",
+  "access_date": "2026-09-10",
+  "read_level": "primary_abstract_and_metadata",
+  "title": "Trace2Skill: Distill Trajectory-Local Lessons into Transferable Agent Skills",
+  "first_date": "2026/03/26",
+  "current_version_date": "2026/06/04",
+  "abstract": "Large Language Model (LLM) agents increasingly rely on domain-specific skills, yet manually authoring such skills does not scale, and skills generated purely from parametric knowledge often miss critical operational pitfalls. We introduce Trace2Skill, a framework that consolidates broad execution trajectories in parallel into a unified skill directory through inductive reasoning over agent experience. Trace2Skill supports both deepening existing human-written skills and creating useful skills from weak LLM-generated drafts. Experiments demonstrate the effectiveness of Trace2Skill across diverse domains, including office workflows, math reasoning, and vision QA. Importantly, the evolved skills are not merely memorized artifacts of the trajectories used to create them: they often transfer across model scales, across model families, and to out-of-distribution settings. For example, skills evolved from Qwen3.5-35B trajectories improve a Qwen3.5-122B agent by up to $57.65$ percentage points on WikiTableQuestions. Further analyses show that Trace2Skill outperforms sequential skill editing and ReasoningBank-style retrieval memories, compresses recurring failures and workarounds into standard operating procedures (SoPs), and yields portable skills that can be reused without parameter updates or test-time retrieval.",
+  "history": "Submission history From: Jingwei Ni [ view email ] [v1] Thu, 26 Mar 2026 08:26:38 UTC (747 KB) [v2] Sun, 29 Mar 2026 09:00:59 UTC (747 KB) [v3] Tue, 31 Mar 2026 04:56:03 UTC (747 KB) [v4] Mon, 27 Apr 2026 10:34:24 UTC (747 KB) [v5] Thu, 4 Jun 2026 12:51:52 UTC (813 KB)",
+  "sha256_html": "96b05e051a44e8d7f6d8935f3520efea1f385ec9e1ae67d98aeda5d1d8aa4583",
+  "status": "ok"
+}

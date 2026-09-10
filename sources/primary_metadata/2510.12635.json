@@ -1,0 +1,13 @@
+{
+  "arxiv_id": "2510.12635",
+  "url": "https://arxiv.org/abs/2510.12635",
+  "access_date": "2026-09-10",
+  "read_level": "primary_abstract_and_metadata",
+  "title": "Memory as Action: Autonomous Context Curation for Long-Horizon Agentic Tasks",
+  "first_date": "2025/10/14",
+  "current_version_date": "2026/05/07",
+  "abstract": "Long-context Large Language Models, despite their expanded capacity, require careful working memory management to mitigate attention dilution during long-horizon tasks. Yet existing approaches rely on external mechanisms that lack awareness of the agent's reasoning state, leading to suboptimal decisions. We propose Memory-as-Action (MemAct), a framework that treats working memory management as learnable policy actions. By formulating context management as in-place editing operations (deletion, insertion), MemAct enables joint optimization of information retention and task performance through end-to-end reinforcement learning. To address the computational challenges of dynamic context updates, we introduce Dynamic Context Policy Optimization, which restores training efficiency without compromising reasoning integrity. Experiments show that MemAct-RL-14B matches the accuracy of models $16\\times$ larger while reducing average context length by 51\\%, with learned strategies that adapt to model capabilities and generalize across task complexities.",
+  "history": "Submission history From: Yuxiang Zhang [ view email ] [v1] Tue, 14 Oct 2025 15:29:57 UTC (327 KB) [v2] Sat, 10 Jan 2026 01:44:56 UTC (374 KB) [v3] Thu, 7 May 2026 13:18:53 UTC (371 KB)",
+  "sha256_html": "d9282a118de527e10815b2379f5e772df7e0f646bcc2105cd0273049cdb8d745",
+  "status": "ok"
+}

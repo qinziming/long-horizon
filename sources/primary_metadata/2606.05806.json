@@ -1,0 +1,13 @@
+{
+  "arxiv_id": "2606.05806",
+  "url": "https://arxiv.org/abs/2606.05806",
+  "access_date": "2026-09-10",
+  "read_level": "primary_abstract_and_metadata",
+  "title": "When Tools Fail: Benchmarking Dynamic Replanning and Anomaly Recovery in LLM Agents",
+  "first_date": "2026/06/04",
+  "current_version_date": "2026/06/04",
+  "abstract": "Existing benchmarks evaluate Tool-Integrated Reasoning (TIR) in LLMs on idealized ''happy paths'', largely overlooking real-world tool failures. We introduce ToolMaze, a benchmark for dynamic path discovery and error recovery in TIR agents. To separate systematic replanning from blind trial-and-error, ToolMaze adopts a two-dimensional design: DAG-based topological complexity and a $2 \\times 2$ taxonomy of tool perturbations (explicit/implicit, transient/permanent). Evaluations show that perturbations degrade performance across nearly all models, with the sharpest drops under implicit semantic failures. Driven by systemic over-trust in corrupted outputs, Perturbation Recovery Rate (PRR) plummets by around 37\\% in these scenarios, while complex topologies trap agents in futile trial-and-error loops. Crucially, agentic fault-tolerance improves with model scale $3.66\\times$ slower than basic task execution, highlighting dynamic replanning as a distinct bottleneck unaddressed by model scaling or prompting. Data and code are available at this https URL .",
+  "history": "Submission history From: Dongsheng Zhu [ view email ] [v1] Thu, 4 Jun 2026 07:38:46 UTC (2,375 KB)",
+  "sha256_html": "68f91b79bdeebb0fef45160d416264a2474c3098ee5d8a816a3f82e36ea7fd7f",
+  "status": "ok"
+}

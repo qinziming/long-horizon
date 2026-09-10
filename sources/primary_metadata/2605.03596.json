@@ -1,0 +1,13 @@
+{
+  "arxiv_id": "2605.03596",
+  "url": "https://arxiv.org/abs/2605.03596",
+  "access_date": "2026-09-10",
+  "read_level": "primary_abstract_and_metadata",
+  "title": "Workspace-Bench 1.0: Benchmarking AI Agents on Workspace Tasks with Large-Scale File Dependencies",
+  "first_date": "2026/05/05",
+  "current_version_date": "2026/05/14",
+  "abstract": "Workspace learning requires AI agents to identify, reason over, exploit, and update explicit and implicit dependencies among heterogeneous files in a worker's workspace, enabling them to complete both routine and advanced tasks effectively. Despite its importance, existing relevant benchmarks largely evaluate agents on pre-specified or synthesized files with limited real-world dependencies, leaving workspace-level evaluation underexplored. To this end, we introduce Workspace-Bench, a benchmark for evaluating AI agents on Workspace Learning involving Large-Scale File Dependencies. We construct realistic workspaces with 5 worker profiles, 74 file types, 20,476 files (up to 20GB) and curate 388 tasks, each with its own file dependency graph, evaluated across 7,399 total rubrics that require cross-file retrieval, contextual reasoning, and adaptive decision-making. We further provide Workspace-Bench-Lite, a 100-task subset that preserves the benchmark distribution while reducing evaluation costs by about 70%. We evaluate 4 popular agent harnesses and 7 foundation models. Experimental results show that current agents remain far from reliable workspace learning, where the best reaches only about 60%, substantially below the human result of 80.7%, and the average performance across agents is only 43.3%.",
+  "history": "Submission history From: Zirui Tang [ view email ] [v1] Tue, 5 May 2026 10:17:06 UTC (12,004 KB) [v2] Mon, 11 May 2026 17:14:45 UTC (10,120 KB) [v3] Tue, 12 May 2026 03:08:40 UTC (9,997 KB) [v4] Thu, 14 May 2026 13:14:02 UTC (10,496 KB)",
+  "sha256_html": "0451d41c3502fef9043c683cc4fac8f8e2d168fe74bcee5d12c00d7d4de21317",
+  "status": "ok"
+}

@@ -1,0 +1,13 @@
+{
+  "arxiv_id": "2511.10395",
+  "url": "https://arxiv.org/abs/2511.10395",
+  "access_date": "2026-09-10",
+  "read_level": "primary_abstract_and_metadata",
+  "title": "AgentEvolver: Towards Efficient Self-Evolving Agent System",
+  "first_date": "2025/11/13",
+  "current_version_date": "2025/11/13",
+  "abstract": "Autonomous agents powered by large language models (LLMs) have the potential to significantly enhance human productivity by reasoning, using tools, and executing complex tasks in diverse environments. However, current approaches to developing such agents remain costly and inefficient, as they typically require manually constructed task datasets and reinforcement learning (RL) pipelines with extensive random exploration. These limitations lead to prohibitively high data-construction costs, low exploration efficiency, and poor sample utilization. To address these challenges, we present AgentEvolver, a self-evolving agent system that leverages the semantic understanding and reasoning capabilities of LLMs to drive autonomous agent learning. AgentEvolver introduces three synergistic mechanisms: (i) self-questioning, which enables curiosity-driven task generation in novel environments, reducing dependence on handcrafted datasets; (ii) self-navigating, which improves exploration efficiency through experience reuse and hybrid policy guidance; and (iii) self-attributing, which enhances sample efficiency by assigning differentiated rewards to trajectory states and actions based on their contribution. By integrating these mechanisms into a unified framework, AgentEvolver enables scalable, cost-effective, and continual improvement of agent capabilities. Preliminary experiments indicate that AgentEvolver achieves more efficient exploration, better sample utilization, and faster adaptation compared to traditional RL-based baselines.",
+  "history": "Submission history From: Yunpeng Zhai [ view email ] [v1] Thu, 13 Nov 2025 15:14:47 UTC (2,357 KB)",
+  "sha256_html": "3c6b01605ce28dd63a0c04bb2eaad9f56447389e39899fe280e04557289125b2",
+  "status": "ok"
+}

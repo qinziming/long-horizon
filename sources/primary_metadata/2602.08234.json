@@ -1,0 +1,13 @@
+{
+  "arxiv_id": "2602.08234",
+  "url": "https://arxiv.org/abs/2602.08234",
+  "access_date": "2026-09-10",
+  "read_level": "primary_abstract_and_metadata",
+  "title": "SkillRL: Evolving Agents via Recursive Skill-Augmented Reinforcement Learning",
+  "first_date": "2026/02/09",
+  "current_version_date": "2026/02/09",
+  "abstract": "Large Language Model (LLM) agents have shown stunning results in complex tasks, yet they often operate in isolation, failing to learn from past experiences. Existing memory-based methods primarily store raw trajectories, which are often redundant and noise-heavy. This prevents agents from extracting high-level, reusable behavioral patterns that are essential for generalization. In this paper, we propose SkillRL, a framework that bridges the gap between raw experience and policy improvement through automatic skill discovery and recursive evolution. Our approach introduces an experience-based distillation mechanism to build a hierarchical skill library SkillBank, an adaptive retrieval strategy for general and task-specific heuristics, and a recursive evolution mechanism that allows the skill library to co-evolve with the agent's policy during reinforcement learning. These innovations significantly reduce the token footprint while enhancing reasoning utility. Experimental results on ALFWorld, WebShop and seven search-augmented tasks demonstrate that SkillRL achieves state-of-the-art performance, outperforming strong baselines over 15.3% and maintaining robustness as task complexity increases. Code is available at this this https URL .",
+  "history": "Submission history From: Peng Xia [ view email ] [v1] Mon, 9 Feb 2026 03:17:17 UTC (11,757 KB)",
+  "sha256_html": "db4d128e06d23e54c43640a60e8cf7c7880edf86d9ad8f356c02c85ddd0bbd44",
+  "status": "ok"
+}

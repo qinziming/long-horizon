@@ -1,0 +1,13 @@
+{
+  "arxiv_id": "2604.24005",
+  "url": "https://arxiv.org/abs/2604.24005",
+  "access_date": "2026-09-10",
+  "read_level": "primary_abstract_and_metadata",
+  "title": "TCOD: Exploring Temporal Curriculum in On-Policy Distillation for Multi-turn Autonomous Agents",
+  "first_date": "2026/04/27",
+  "current_version_date": "2026/04/29",
+  "abstract": "On-policy distillation (OPD) has shown strong potential for transferring reasoning ability from frontier or domain-specific models to smaller students. While effective on static single-turn tasks, its behavior in multi-turn agent settings remains underexplored. In this work, we identify a key limitation of vanilla OPD in such settings, which we term Trajectory-Level KL Instability. Specifically, we observe that KL divergence increases together with a drop in success rate, and even after convergence, the KL remains high, leading to unstable training. This instability arises from inter-turn error compounding: as errors accumulate, the student is driven beyond the teacher's effective support, rendering the supervision signal unreliable. To address this, we propose TCOD (Temporal Curriculum On-Policy Distillation), a simple yet effective framework that controls the trajectory depth exposed to the student and progressively expands it from short to long with a curriculum schedule. Experimental results across four student-teacher pairs on three multi-turn agent benchmarks (ALFWorld, WebShop, ScienceWorld) show that TCOD mitigates KL escalation and enhances KL stability throughout training, improving agent performance by up to 18 points over vanilla OPD. Further evaluations show that TCOD can even surpass the teacher's performance and generalize to tasks on which the teacher fails. Our code is available at this https URL .",
+  "history": "Submission history From: Jiaqi Wang [ view email ] [v1] Mon, 27 Apr 2026 03:38:27 UTC (942 KB) [v2] Tue, 28 Apr 2026 08:44:52 UTC (942 KB) [v3] Wed, 29 Apr 2026 03:05:32 UTC (942 KB)",
+  "sha256_html": "9f39346f9c932b40d69cde5ae2ab103726b8709936cea1363f61e278183803d2",
+  "status": "ok"
+}

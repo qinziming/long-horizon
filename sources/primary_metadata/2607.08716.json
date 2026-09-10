@@ -1,0 +1,13 @@
+{
+  "arxiv_id": "2607.08716",
+  "url": "https://arxiv.org/abs/2607.08716",
+  "access_date": "2026-09-10",
+  "read_level": "primary_abstract_and_metadata",
+  "title": "Remember When It Matters: Proactive Memory Agent for Long-Horizon Agents",
+  "first_date": "2026/07/09",
+  "current_version_date": "2026/07/09",
+  "abstract": "In long-horizon tasks, decision-relevant state is often scattered across an expanding trajectory, while the action agent must surface it and act. As trajectories grow, task requirements, environment facts, prior attempts, diagnoses, and open subgoals can be buried in the context window or pushed beyond it, failing to influence decisions when needed. We call this failure mode \"behavioral state decay\". We study memory as an active intervention mechanism rather than passive retrieval. A separate memory agent runs alongside an unmodified action agent, updating a structured memory bank from the recent trajectory and deciding whether to inject a memory-grounded reminder or remain silent. The module is plug-and-play with frontier action agents and existing agent harnesses. Across Terminal-Bench 2.0 and $\\tau^2$-Bench, it improves pass@1 for both weaker and stronger action agents, with gains of +8.3 pp on Terminal-Bench and +6.8 pp on $\\tau^2$-Bench. Ablations show that selective intervention outperforms passive bank exposure, always-on injection, advisor-only guidance, and general retrieval. As an early step toward open-weight memory policies, we train Qwen3.5-27B on SETA using SFT and GRPO, improving validation reward and achieving partial transfer to Terminal-Bench.",
+  "history": "Submission history From: Yifan Wu [ view email ] [v1] Thu, 9 Jul 2026 17:26:28 UTC (11,099 KB)",
+  "sha256_html": "30bb50ef50b4e2ce15e6e98d5e0a0f11b5983ad3b9e458c25204c64720b22a1e",
+  "status": "ok"
+}

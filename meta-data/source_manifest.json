@@ -1,0 +1,25 @@
+{
+  "access_date": "2026-09-10",
+  "repository": "https://github.com/RUC-NLPIR/Awesome-Long-Horizon-Agents",
+  "commit": "084cafe83e3d10814ae0b63329bd10aa5945fd97",
+  "files": [
+    {
+      "name": "README.md",
+      "url": "https://raw.githubusercontent.com/RUC-NLPIR/Awesome-Long-Horizon-Agents/084cafe83e3d10814ae0b63329bd10aa5945fd97/README.md",
+      "bytes": 134112,
+      "sha256": "d941b9ab6a22188272a99865d0e15a977e442528f22fe039adca40912cb5a43b"
+    },
+    {
+      "name": "LICENSE",
+      "url": "https://raw.githubusercontent.com/RUC-NLPIR/Awesome-Long-Horizon-Agents/084cafe83e3d10814ae0b63329bd10aa5945fd97/LICENSE",
+      "bytes": 1137,
+      "sha256": "310cf30f05d7b90d81b4acd272f909ec3aef3fb1a0c653b1033d32366e2362a6"
+    },
+    {
+      "name": "Towards_Long_Horizon_Agents_A_Survey.pdf",
+      "url": "https://raw.githubusercontent.com/RUC-NLPIR/Awesome-Long-Horizon-Agents/084cafe83e3d10814ae0b63329bd10aa5945fd97/Towards_Long_Horizon_Agents_A_Survey.pdf",
+      "bytes": 11820567,
+      "sha256": "c62da7e66a4c3f7251ed8b450f51df6500b2f850c7c70853779614e3d780e738"
+    }
+  ]
+}

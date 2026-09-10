@@ -1,0 +1,13 @@
+{
+  "arxiv_id": "2603.29231",
+  "url": "https://arxiv.org/abs/2603.29231",
+  "access_date": "2026-09-10",
+  "read_level": "primary_abstract_and_metadata",
+  "title": "Beyond pass@1: A Reliability Science Framework for Long-Horizon LLM Agents",
+  "first_date": "2026/03/31",
+  "current_version_date": "2026/03/31",
+  "abstract": "Existing benchmarks measure capability -- whether a model succeeds on a single attempt -- but production deployments require reliability -- consistent success across repeated attempts on tasks of varying duration. We show these properties diverge systematically as task duration grows, and that pass@1 on short tasks is structurally blind to this divergence. We introduce a reliability science framework for long-horizon LLM agents with four metrics: Reliability Decay Curve (RDC), Variance Amplification Factor (VAF), Graceful Degradation Score (GDS), and Meltdown Onset Point (MOP). We evaluate 10 models across 23,392 episodes on a 396-task benchmark spanning four duration buckets and three domains. Key findings: (1) reliability decay is domain-stratified -- SE GDS drops from 0.90 to 0.44 while document processing is nearly flat (0.74 to 0.71); (2) VAF bifurcates by capability tier -- high VAF is a capability signature, not an instability signal; (3) capability and reliability rankings diverge substantially, with multi-rank inversions at long horizons; (4) frontier models have the highest meltdown rates (up to 19%) because they attempt ambitious multi-step strategies that sometimes spiral; and (5) memory scaffolds universally hurt long-horizon performance across all 10 models. These results motivate reliability as a first-class evaluation dimension alongside capability.",
+  "history": "Submission history From: Aaditya Khanal [ view email ] [v1] Tue, 31 Mar 2026 03:56:39 UTC (490 KB)",
+  "sha256_html": "8683ceca5c69f6b5704c4962be8ca0510cf14b760c440dd947a688daf10b88ec",
+  "status": "ok"
+}

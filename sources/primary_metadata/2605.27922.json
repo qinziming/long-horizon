@@ -1,0 +1,13 @@
+{
+  "arxiv_id": "2605.27922",
+  "url": "https://arxiv.org/abs/2605.27922",
+  "access_date": "2026-09-10",
+  "read_level": "primary_abstract_and_metadata",
+  "title": "Harness-Bench: Measuring Harness Effects across Models in Realistic Agent Workflows",
+  "first_date": "2026/05/27",
+  "current_version_date": "2026/05/27",
+  "abstract": "LLM agents are increasingly deployed as executable systems that use tools, modify workspaces, and produce concrete artifacts. In such workflows, performance depends not only on the base model, but also on the harness: the system layer that manages context, tools, state, constraints, permissions, tracing, and recovery. However, existing benchmarks typically abstract away execution, compare complete agent systems, or hold the harness fixed, making execution-layer variation difficult to study. We introduce Harness-Bench, a diagnostic benchmark for evaluating configuration-level harness effects in realistic agent workflows. Harness-Bench evaluates representative harness configurations across multiple model backends under shared task environments, budgets, and evaluation protocols, while preserving each harness's native execution behavior. The benchmark contains 106 sandboxed offline tasks constructed from practical agent-use patterns and manually reviewed for realism, solvability, oracle-checkability, and integrity. Each run records final artifacts, execution traces, usage statistics, and validator outputs, enabling analysis beyond final completion. Across 5,194 execution trajectories, we observe substantial variation in completion, process quality, efficiency, and failure behavior across model-harness pairings. These results suggest that agent capability should be reported at the model-harness configuration level rather than attributed to the base model alone. Our analysis further identifies recurring execution-alignment failures, where plausible reasoning becomes decoupled from tool feedback, workspace state, evidence, or verifiable output contracts. Harness-Bench provides a reproducible foundation for diagnosing and improving reliable, efficient, and auditable agent execution stacks.",
+  "history": "Submission history From: Yilun Yao [ view email ] [v1] Wed, 27 May 2026 03:47:35 UTC (456 KB)",
+  "sha256_html": "a0620770966bfeb6fe239290e25aa23d2748f9a8a032a34fc2de6e21cf1cd33b",
+  "status": "ok"
+}

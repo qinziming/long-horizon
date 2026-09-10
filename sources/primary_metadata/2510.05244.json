@@ -1,0 +1,13 @@
+{
+  "arxiv_id": "2510.05244",
+  "url": "https://arxiv.org/abs/2510.05244",
+  "access_date": "2026-09-10",
+  "read_level": "primary_abstract_and_metadata",
+  "title": "Indirect Prompt Injections: Are Firewalls All You Need, or Stronger Benchmarks?",
+  "first_date": "2025/10/06",
+  "current_version_date": "2026/03/23",
+  "abstract": "AI agents are vulnerable to indirect prompt injection attacks, where malicious instructions embedded in external content or tool outputs cause unintended or harmful behavior. Inspired by the well-established concept of firewalls, we show that a simple, modular, and model-agnostic defense operating at the agent--tool interface achieves perfect security with high utility across all four public benchmarks: AgentDojo, Agent Security Bench, InjecAgent and tau-Bench, while achieving a state-of-the-art security--utility tradeoff compared to prior results. Specifically, we employ two firewalls: a Tool-Input Firewall (Minimizer) and a Tool-Output Firewall (Sanitizer). Unlike prior complex approaches, this defense makes minimal assumptions about the agent and can be deployed out of the box. This makes it highly generalizable while maintaining strong performance without compromising utility. Our analysis also reveals critical limitations in these existing benchmarks, including flawed success metrics, implementation bugs, and most importantly, weak attacks, hindering progress. To address this, we present targeted fixes to these issues for AgentDojo and Agent Security Bench, and propose best practices for more robust benchmark design. Moreover, we introduce a three-stage attack strategy that cascades standard prompt injection attacks, second-order attacks, and adaptive attacks to evaluate the robustness beyond existing attacks. Overall, our work shows that existing agentic security benchmarks are easily saturated by a simple approach and highlights the need for stronger benchmarks with carefully chosen evaluation metrics and strong adaptive attacks.",
+  "history": "Submission history From: Rishika Bhagwatkar [ view email ] [v1] Mon, 6 Oct 2025 18:09:02 UTC (565 KB) [v2] Mon, 23 Mar 2026 12:25:30 UTC (591 KB)",
+  "sha256_html": "f383f15f9a75a79a1163dc27cabbbf8fb5480899e3457c231adccd0d8fcc8fa3",
+  "status": "ok"
+}

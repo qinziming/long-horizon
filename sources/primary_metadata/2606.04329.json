@@ -1,0 +1,13 @@
+{
+  "arxiv_id": "2606.04329",
+  "url": "https://arxiv.org/abs/2606.04329",
+  "access_date": "2026-09-10",
+  "read_level": "primary_abstract_and_metadata",
+  "title": "From Untrusted Input to Trusted Memory: A Systematic Study of Memory Poisoning Attacks in LLM Agents",
+  "first_date": "2026/06/03",
+  "current_version_date": "2026/06/18",
+  "abstract": "Memory is a core component of AI agents, enabling them to accumulate knowledge across interactions and improve performance. However, persistent memory introduces the risk of memory poisoning, where a single adversarial memory write can exert long-term influence over agent behavior. We present a systematic study of memory poisoning in LLM-based agents. We identify four memory write channels and nine structural vulnerabilities in model capabilities, system prompt design, and agent system architecture that make these channels exploitable. Based on these vulnerabilities, we develop a taxonomy of six classes of memory poisoning attacks. Furthermore, we design MPBench -- a benchmark for evaluating memory poisoning attacks, and show that agents designed to write and retrieve memory more aggressively are more exploitable. We also show that existing prompt injection defenses fail to cover memory poisoning attacks. Our findings provide a foundation for understanding and mitigating memory poisoning attacks against AI agents.",
+  "history": "Submission history From: Pritam Dash [ view email ] [v1] Wed, 3 Jun 2026 01:04:13 UTC (4,365 KB) [v2] Thu, 18 Jun 2026 22:06:23 UTC (4,365 KB)",
+  "sha256_html": "fa4e90696e75c270442fdb5907ce9dc0ce306abe6562466ff69ef217759a39d1",
+  "status": "ok"
+}

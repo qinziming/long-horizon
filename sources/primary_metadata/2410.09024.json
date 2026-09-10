@@ -1,0 +1,13 @@
+{
+  "arxiv_id": "2410.09024",
+  "url": "https://arxiv.org/abs/2410.09024",
+  "access_date": "2026-09-10",
+  "read_level": "primary_abstract_and_metadata",
+  "title": "AgentHarm: A Benchmark for Measuring Harmfulness of LLM Agents",
+  "first_date": "2024/10/11",
+  "current_version_date": "2025/04/18",
+  "abstract": "The robustness of LLMs to jailbreak attacks, where users design prompts to circumvent safety measures and misuse model capabilities, has been studied primarily for LLMs acting as simple chatbots. Meanwhile, LLM agents -- which use external tools and can execute multi-stage tasks -- may pose a greater risk if misused, but their robustness remains underexplored. To facilitate research on LLM agent misuse, we propose a new benchmark called AgentHarm. The benchmark includes a diverse set of 110 explicitly malicious agent tasks (440 with augmentations), covering 11 harm categories including fraud, cybercrime, and harassment. In addition to measuring whether models refuse harmful agentic requests, scoring well on AgentHarm requires jailbroken agents to maintain their capabilities following an attack to complete a multi-step task. We evaluate a range of leading LLMs, and find (1) leading LLMs are surprisingly compliant with malicious agent requests without jailbreaking, (2) simple universal jailbreak templates can be adapted to effectively jailbreak agents, and (3) these jailbreaks enable coherent and malicious multi-step agent behavior and retain model capabilities. To enable simple and reliable evaluation of attacks and defenses for LLM-based agents, we publicly release AgentHarm at this https URL .",
+  "history": "Submission history From: Maksym Andriushchenko [ view email ] [v1] Fri, 11 Oct 2024 17:39:22 UTC (489 KB) [v2] Mon, 14 Oct 2024 17:28:08 UTC (489 KB) [v3] Fri, 18 Apr 2025 14:30:31 UTC (518 KB)",
+  "sha256_html": "41ddac1c6779405777b2268858a9d1b1e0de210ffccc224797a4d52c3a08e89f",
+  "status": "ok"
+}

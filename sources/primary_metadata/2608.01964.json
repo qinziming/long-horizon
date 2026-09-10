@@ -1,0 +1,13 @@
+{
+  "arxiv_id": "2608.01964",
+  "url": "https://arxiv.org/abs/2608.01964",
+  "access_date": "2026-09-10",
+  "read_level": "primary_abstract_and_metadata",
+  "title": "LongHorizon-Harness: Advancing Long-Horizon Agents for Real-World Tasks",
+  "first_date": "2026/08/03",
+  "current_version_date": "2026/08/03",
+  "abstract": "Large language model (LLM) agents increasingly undertake long-horizon tasks that require sustained reasoning, tool use, and revision across many interdependent steps. However, existing agent harnesses maintain task execution, task state, and completion assessment within a growing context, making the state difficult to track and allowing incorrect self-assessments to propagate into later decisions. We reformulate long-horizon execution as a task-state management problem and propose LongHorizon-Harness, which maintains the task state explicitly outside execution and updates it only with facts independently verified from the environment. Its Manage-Execute-Audit(MEA) loop uses a manager to maintain the task state and determine the next subtask, a fresh-context executor to perform it, and a read-only auditor to verify the resulting environment state before the next round. A lightweight AgentAdapter supports interchangeable model and harness backends without modifying their native agent loops. LongHorizon-Harness improves Qwen~3.7-Plus from 51.8% to 80.7% on WeaveBench, from 69.7% to 77.2% on Terminal-Bench~2.1, and from 2.8% to 8.3% on OSWorld~2.0. It also raises Claude Opus~4.7 from 20.0% to 34.3% on an OSWorld2.0 subset, demonstrating consistent gains across models, harnesses, and interaction domains.",
+  "history": "Submission history From: Ziyu Ma [ view email ] [v1] Mon, 3 Aug 2026 09:32:21 UTC (24,613 KB)",
+  "sha256_html": "3a4ae25ed9a2b755a350513c84284be7fcc739a04a23503ac502112f32c39d06",
+  "status": "ok"
+}

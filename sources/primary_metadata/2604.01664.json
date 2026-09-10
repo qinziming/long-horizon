@@ -1,0 +1,13 @@
+{
+  "arxiv_id": "2604.01664",
+  "url": "https://arxiv.org/abs/2604.01664",
+  "access_date": "2026-09-10",
+  "read_level": "primary_abstract_and_metadata",
+  "title": "ContextBudget: Budget-Aware Context Management for Long-Horizon Search Agents",
+  "first_date": "2026/04/02",
+  "current_version_date": "2026/04/02",
+  "abstract": "LLM-based agents show strong potential for long-horizon reasoning, yet their context size is limited by deployment factors (e.g., memory, latency, and cost), yielding a constrained context budget. As interaction histories grow, this induces a trade-off between retaining past information and staying within the context limit. To address this challenge, we propose Budget-Aware Context Management (BACM), which formulates context management as a sequential decision problem with a context budget constraint. It enables agents to assess the available budget before incorporating new observations and decide when and how much of the interaction history to compress. We further develop BACM-RL, an end-to-end curriculum-based reinforcement learning approach that learns compression strategies under varying context budgets. Experiments on compositional multi-objective QA and long-horizon web browsing benchmarks show that BACM-RL consistently outperforms prior methods across model scales and task complexities, achieving over $1.6\\times$ gains over strong baselines in high-complexity settings, while maintaining strong advantages as budgets shrink, where most methods exhibit a downward performance trend.",
+  "history": "Submission history From: Yong Wu [ view email ] [v1] Thu, 2 Apr 2026 06:09:22 UTC (3,089 KB)",
+  "sha256_html": "d099b854d1ec662fe414e2602c5065526ec4d49a346eaed91ef0638e08564efe",
+  "status": "ok"
+}

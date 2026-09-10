@@ -1,0 +1,13 @@
+{
+  "arxiv_id": "2506.15841",
+  "url": "https://arxiv.org/abs/2506.15841",
+  "access_date": "2026-09-10",
+  "read_level": "primary_abstract_and_metadata",
+  "title": "MEM1: Learning to Synergize Memory and Reasoning for Efficient Long-Horizon Agents",
+  "first_date": "2025/06/18",
+  "current_version_date": "2025/07/17",
+  "abstract": "Modern language agents must operate over long-horizon, multi-turn interactions, where they retrieve external information, adapt to observations, and answer interdependent queries. Yet, most LLM systems rely on full-context prompting, appending all past turns regardless of their relevance. This leads to unbounded memory growth, increased computational costs, and degraded reasoning performance on out-of-distribution input lengths. We introduce MEM1, an end-to-end reinforcement learning framework that enables agents to operate with constant memory across long multi-turn tasks. At each turn, MEM1 updates a compact shared internal state that jointly supports memory consolidation and reasoning. This state integrates prior memory with new observations from the environment while strategically discarding irrelevant or redundant information. To support training in more realistic and compositional settings, we propose a simple yet effective and scalable approach to constructing multi-turn environments by composing existing datasets into arbitrarily complex task sequences. Experiments across three domains, including internal retrieval QA, open-domain web QA, and multi-turn web shopping, show that MEM1-7B improves performance by 3.5x while reducing memory usage by 3.7x compared to Qwen2.5-14B-Instruct on a 16-objective multi-hop QA task, and generalizes beyond the training horizon. Our results demonstrate the promise of reasoning-driven memory consolidation as a scalable alternative to existing solutions for training long-horizon interactive agents, where both efficiency and performance are optimized.",
+  "history": "Submission history From: Ao Qu [ view email ] [v1] Wed, 18 Jun 2025 19:44:46 UTC (5,049 KB) [v2] Thu, 17 Jul 2025 08:53:48 UTC (5,050 KB)",
+  "sha256_html": "a05000d5823386abec34b52298a9a89d02b7036fdd92607c13f4aa6d3c73bd15",
+  "status": "ok"
+}

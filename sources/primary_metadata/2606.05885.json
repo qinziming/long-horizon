@@ -1,0 +1,13 @@
+{
+  "arxiv_id": "2606.05885",
+  "url": "https://arxiv.org/abs/2606.05885",
+  "access_date": "2026-09-10",
+  "read_level": "primary_abstract_and_metadata",
+  "title": "When Denser Credit Is Not Enough: Evidence-Calibrated Policy Optimization for Long-Horizon LLM Agent Training",
+  "first_date": "2026/06/04",
+  "current_version_date": "2026/06/04",
+  "abstract": "Long-horizon LLM agents require reinforcement learning methods that can assign credit to intermediate decisions under sparse and delayed rewards. Recent group-based methods such as GiGPO improve over GRPO by constructing step-level advantages at repeated anchor states. However, we show that such dense credit can be statistically unreliable: under limited rollouts, rare but lucky actions may receive overly large advantages, producing divergent anchor bias and late-stage training oscillation. We propose Evidence-Calibrated Policy Optimization (ECPO), a critic-free policy optimization algorithm that calibrates step-level credit before policy updates. ECPO combines Evidence-Calibrated Action Advantage, which groups rollouts by canonical actions and shrinks low-count estimates, with Variance-Gated Credit Weighting, which suppresses anchor states dominated by within-action noise. Experiments on ALFWorld and WebShop with Qwen2.5-1.5B/7B show that ECPO consistently outperforms strong baselines, improving GiGPO by +5.2/+7.3 success points on ALFWorld/WebShop with Qwen2.5-1.5B while adding only 0.1% additional advantage-computation overhead.",
+  "history": "Submission history From: Wenjing Duan [ view email ] [v1] Thu, 4 Jun 2026 08:54:09 UTC (3,322 KB)",
+  "sha256_html": "812892b69a29ecd3162c1fcfb447370fd0706458659921bb93a16007558510f0",
+  "status": "ok"
+}

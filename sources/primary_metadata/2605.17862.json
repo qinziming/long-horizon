@@ -1,0 +1,13 @@
+{
+  "arxiv_id": "2605.17862",
+  "url": "https://arxiv.org/abs/2605.17862",
+  "access_date": "2026-09-10",
+  "read_level": "primary_abstract_and_metadata",
+  "title": "$\\boldsymbol{f}$-OPD: Stabilizing Long-Horizon On-Policy Distillation with Freshness-Aware Control",
+  "first_date": "2026/05/18",
+  "current_version_date": "2026/05/18",
+  "abstract": "Scaling on-policy distillation (OPD) for large language models (LLMs) confronts a fundamental tension: asynchronous execution is necessary for system efficiency, but structurally deviates from the ideal on-policy objective. To address this challenge, we theoretically decompose the objective discrepancy into rollout drift and supervision drift, capturing staleness in student rollout and teacher context, respectively. Building on this, we introduce a sample-level freshness score that quantifies the reliability of a buffered sample with respect to the on-policy objective. Guided by this signal, we further propose f-OPD, a novel framework that adaptively regulates stale-sample influence and constrains policy drift accumulated under asynchronous training. Across reasoning, tool-use, and coding-agent tasks of increasing interaction horizon, f-OPD consistently achieves task performance comparable to synchronous optimization while largely retaining the throughput advantages of asynchronous execution. Our results establish the first recipe for achieving a performance-efficiency trade-off in OPD, paving the way for long-horizon agentic post-training at scale.",
+  "history": "Submission history From: Shimin Zhang [ view email ] [v1] Mon, 18 May 2026 05:14:18 UTC (1,069 KB)",
+  "sha256_html": "e72d8b5d171877c7f69922dd0b8764511af642fe249dddac1873972d86b60756",
+  "status": "ok"
+}

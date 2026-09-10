@@ -1,0 +1,13 @@
+{
+  "arxiv_id": "2503.22738",
+  "url": "https://arxiv.org/abs/2503.22738",
+  "access_date": "2026-09-10",
+  "read_level": "primary_abstract_and_metadata",
+  "title": "ShieldAgent: Shielding Agents via Verifiable Safety Policy Reasoning",
+  "first_date": "2025/03/26",
+  "current_version_date": "2025/11/27",
+  "abstract": "Autonomous agents powered by foundation models have seen widespread adoption across various real-world applications. However, they remain highly vulnerable to malicious instructions and attacks, which can result in severe consequences such as privacy breaches and financial losses. More critically, existing guardrails for LLMs are not applicable due to the complex and dynamic nature of agents. To tackle these challenges, we propose ShieldAgent, the first guardrail agent designed to enforce explicit safety policy compliance for the action trajectory of other protected agents through logical reasoning. Specifically, ShieldAgent first constructs a safety policy model by extracting verifiable rules from policy documents and structuring them into a set of action-based probabilistic rule circuits. Given the action trajectory of the protected agent, ShieldAgent retrieves relevant rule circuits and generates a shielding plan, leveraging its comprehensive tool library and executable code for formal verification. In addition, given the lack of guardrail benchmarks for agents, we introduce ShieldAgent-Bench, a dataset with 3K safety-related pairs of agent instructions and action trajectories, collected via SOTA attacks across 6 web environments and 7 risk categories. Experiments show that ShieldAgent achieves SOTA on ShieldAgent-Bench and three existing benchmarks, outperforming prior methods by 11.3% on average with a high recall of 90.1%. Additionally, ShieldAgent reduces API queries by 64.7% and inference time by 58.2%, demonstrating its high precision and efficiency in safeguarding agents.",
+  "history": "Submission history From: Zhaorun Chen [ view email ] [v1] Wed, 26 Mar 2025 17:58:40 UTC (6,544 KB) [v2] Thu, 27 Nov 2025 22:01:17 UTC (2,978 KB)",
+  "sha256_html": "3a25219c058cf05bb6ddfbf1c467a3ec6a55be4a28359164862a0bb64f0b48b1",
+  "status": "ok"
+}

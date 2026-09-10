@@ -1,0 +1,13 @@
+{
+  "arxiv_id": "2509.13313",
+  "url": "https://arxiv.org/abs/2509.13313",
+  "access_date": "2026-09-10",
+  "read_level": "primary_abstract_and_metadata",
+  "title": "ReSum: Unlocking Long-Horizon Search Intelligence via Context Summarization",
+  "first_date": "2025/09/16",
+  "current_version_date": "2026/03/26",
+  "abstract": "Large Language Model (LLM)-based web agents excel at knowledge-intensive tasks but face a fundamental conflict between the need for extensive exploration and the constraints of limited context windows. Current solutions typically rely on architectural modifications, e.g., internal memory tokens, which break compatibility with pre-existing agents and necessitate costly end-to-end retraining. To overcome these limitations, we introduce ReSum, a lightweight, plug-and-play paradigm that enables unbounded exploration by periodically invoking an external tool to condense interaction histories into compact summaries. Although this paradigm functions without training, standard agents are not inherently aligned to reason over such compressed contexts. To bridge this gap, we propose ReSum-GRPO, which adapts Group Relative Policy Optimization (GRPO) via advantage broadcasting to propagate final rewards across segmented trajectories, enabling credit assignments over long-horizons. Extensive experiments show that ReSum achieves a 4.5% improvement over ReAct in training-free settings, with ReSum-GRPO yielding a further 8.2% gain. Notably, with only 1K training samples, a ReSum-enhanced 30B agent achieves competitive performance with leading open-source models, showing ReSum's effectiveness.",
+  "history": "Submission history From: Xixi Wu [ view email ] [v1] Tue, 16 Sep 2025 17:57:22 UTC (3,358 KB) [v2] Wed, 15 Oct 2025 15:51:13 UTC (2,691 KB) [v3] Thu, 26 Mar 2026 06:50:32 UTC (1,329 KB)",
+  "sha256_html": "28a0d96328965710a5662fbdd4654c5866d9aba5cb691af845096d800715b09b",
+  "status": "ok"
+}

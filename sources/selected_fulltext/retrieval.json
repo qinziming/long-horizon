@@ -1,0 +1,37 @@
+[
+  {
+    "id": "2608.01964",
+    "url": "https://arxiv.org/html/2608.01964v1",
+    "chars": 82952,
+    "status": "downloaded_not_fully_read"
+  },
+  {
+    "id": "2608.14380",
+    "url": "https://arxiv.org/html/2608.14380v1",
+    "chars": 93261,
+    "status": "downloaded_not_fully_read"
+  },
+  {
+    "id": "2609.04518",
+    "url": "https://arxiv.org/html/2609.04518v1",
+    "chars": 75952,
+    "status": "downloaded_not_fully_read"
+  },
+  {
+    "id": "2602.16313",
+    "url": "https://arxiv.org/html/2602.16313v1",
+    "chars": 115648,
+    "status": "downloaded_not_fully_read"
+  },
+  {
+    "id": "2605.17862",
+    "status": "error",
+    "error": "HTTPSConnectionPool(host='arxiv.org', port=443): Max retries exceeded with url: /html/2605.17862v1 (Caused by ProxyError('Unable to connect to proxy', RemoteDisconnected('Remote end closed connection without response')))"
+  },
+  {
+    "id": "2505.22954",
+    "url": "https://arxiv.org/html/2505.22954v1",
+    "chars": 199588,
+    "status": "downloaded_not_fully_read"
+  }
+]

@@ -1,0 +1,71 @@
+{
+  "entries": 775,
+  "distinct_primary_keys": 739,
+  "distinct_normalized_titles": 726,
+  "entries_by_section": {
+    "Evolution: From Prompting to Runtime": 61,
+    "Harnesses: Externalizing Long-Horizon Capability (Pillar I)": 199,
+    "Optimization: Internalizing Long-Horizon Capability (Pillar II)": 246,
+    "Applications: Long-Horizon Agents in Practice": 226,
+    "Benchmarks and Resources": 38,
+    "Frontiers: Open Problems": 5
+  },
+  "code_label_points_to_paper": [
+    {
+      "entry_id": "R0743",
+      "title": "Tongyi DeepResearch Technical Report",
+      "url": "https://arxiv.org/abs/2510.24701"
+    },
+    {
+      "entry_id": "R0745",
+      "title": "MMInA: Benchmarking Multihop Multimodal Internet Agents",
+      "url": "https://doi.org/10.18653/v1/2025.findings-acl.703"
+    },
+    {
+      "entry_id": "R0746",
+      "title": "GISA: A Benchmark for General Information-Seeking Assistant",
+      "url": "https://arxiv.org/abs/2602.08543"
+    },
+    {
+      "entry_id": "R0752",
+      "title": "PointArena: Probing Multimodal Grounding Through Language-Guided Pointing",
+      "url": "https://arxiv.org/abs/2505.09990"
+    },
+    {
+      "entry_id": "R0758",
+      "title": "MVBench: A Comprehensive Multi-modal Video Understanding Benchmark",
+      "url": "https://doi.org/10.1109/CVPR52733.2024.02095"
+    },
+    {
+      "entry_id": "R0759",
+      "title": "StreamingBench: Assessing the Gap for MLLMs to Achieve Streaming Video Understanding",
+      "url": "https://arxiv.org/abs/2411.03628"
+    },
+    {
+      "entry_id": "R0760",
+      "title": "OmniVideoBench: Towards Audio-Visual Understanding Evaluation for Omni MLLMs",
+      "url": "https://arxiv.org/abs/2510.10689"
+    },
+    {
+      "entry_id": "R0767",
+      "title": "YC-Bench: Benchmarking AI Agents for Long-Term Planning and Consistent Execution",
+      "url": "https://arxiv.org/abs/2604.01212"
+    },
+    {
+      "entry_id": "R0768",
+      "title": "Seed2.0 Model Card: Towards Intelligence Frontier for Real-World Complexity",
+      "url": "https://arxiv.org/abs/2607.00248"
+    },
+    {
+      "entry_id": "R0769",
+      "title": "Beyond the Nav-Graph: Vision-and-Language Navigation in Continuous Environments",
+      "url": "https://doi.org/10.1007/978-3-030-58604-1_7"
+    },
+    {
+      "entry_id": "R0770",
+      "title": "Augmenting large language models with chemistry tools",
+      "url": "https://doi.org/10.1038/s42256-024-00832-8"
+    }
+  ],
+  "caveat": "URL-key and normalized-title counts are separate mechanical deduplication views; neither is an exact count of unique scholarly works. Paper, code, venue and publication status are not verified by this parser."
+}

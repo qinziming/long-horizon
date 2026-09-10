@@ -1,0 +1,407 @@
+What Does Multi-Harness RL Learn? Credit Assignment and Portability in Coding Agents Chenqian Le † † thanks: Equal contribution. Affiliation: New York University Email: cl6707@nyu.edu Jiayi Cheng 1 1 footnotemark: 1 Affiliation: New York University Email: jc10077@nyu.edu Qijia He Affiliation: University of Washington Email: heqj3@uw.edu Runhao Li Affiliation: University of Southern California Email: runhaoli@usc.edu Yinghao Li Affiliation: Columbia University Email: yinghao.li@columbia.edu Xupeng Chen † † thanks: Corresponding author. Affiliation: Dimension Gate Email: xupengchen@dimensiongate.cn Abstract Agent reinforcement learning (RL) increasingly runs through full execution harnesses, and a
+multi-harness recipe mixes two choices: exposing the policy to several harnesses, and comparing
+their rewards inside one relative-advantage group. We isolate the second choice in
+repository-level coding. From one Qwen3-8B supervised warm start we replay the same frozen
+task–harness records from Aider, OpenHands, Qwen Code, and SWE-agent, with the same number of
+updates, under two rules for group-relative policy optimization (GRPO), Within (one group per task–harness pair)
+and Cross (harnesses pooled within a task), and score every checkpoint with one sealed
+SWE-bench Verified oracle on the four source harnesses and on a minimal harness held out of
+training. The evaluation harness is the dominant variable: across 24,000 sealed evaluations
+it moves the mean solve rate from 2.14% to 9.27%, a factor of
+4.3, where the training recipe moves it by 1.16. The grouping rule is
+not. On the held-out harness, Cross minus Within is + 0.25 +0.25 percentage points (pp), 95% confidence interval [ − 0.48 , + 1.02 ] [-0.48,+1.02] ,
+at eight attempts per task, and +0.16 [ − 0.41 , + 0.72 ] [-0.41,+0.72] pooled over three training seeds whose
+individual estimates change sign. Each rule’s own seed range, 0.42 to
+0.45 pp \,\mathrm{pp} , exceeds the difference between them. Both rules place their largest gains
+on the same source harness. The
+pooled advantage carries the harness: an out-of-fold classifier recovers the generating
+harness from Cross’s advantage +4.48 pp \,\mathrm{pp} above the shuffled-label baseline and from
+Within’s not at all, and the two rules still reach the same held-out score and the same action
+distribution inside each harness. Re-collecting half
+the training data on-policy does not change this. Cross-harness credit yields
+configuration adaptation and no more portable capability than within-harness credit. Multi-harness RL reports should state the grouping boundary and test under an unseen
+harness. 1 Introduction Coding agents act through production harnesses that choose prompts, tools, observations,
+context-management rules, retries, and control flow ( Yang et al., 2024 ; Wang et al., 2025a ; Gauthier, 2024 ; Qwen Team, 2025a ) . Recent systems train policies through these
+harnesses, sometimes using several harnesses or harness configurations for one policy ( Xu and others, 2026 ; Yu and others, 2026 ; Kimi Team, 2026 ; Song et al., 2026 ) . The phrase multi-harness RL does not specify how those harnesses interact during credit assignment. Exposure does not determine the grouping rule. When several harnesses attempt the same task,
+their outcomes may be compared directly or normalized separately. HarnessX groups same-task
+traces across successive harness and model versions, so the traces compete inside one GRPO group ( Chen and others, 2026 ) . ClawGym II treats each task–harness pair as the optimization unit instead:
+the harnesses share a policy and minibatch, but reward normalization remains separate ( Song et al., 2026 ) . Because these systems also differ in exposure, rollout generation,
+training regime, and evaluation, their end-to-end results do not isolate the grouping boundary. We isolate that boundary in repository-level coding (Figure 1 ). Four production
+harnesses collect a frozen trajectory corpus on a shared SWE-Gym pool ( Pan et al., 2025 ) . From the same Qwen3-8B ( Qwen Team, 2025b ) supervised warm start, the two primary RL arms replay identical records,
+tokens, rewards, loss masks, and update budget. Within forms GRPO ( Shao et al., 2024 ) groups inside each task–harness pair. Cross ( PlainCross in the released artifacts) pools all harnesses for the task. We evaluate
+every resulting checkpoint with one sealed per-instance oracle on the four source harnesses and
+on a minimal harness absent from training. The comparison holds experience diversity fixed and
+changes only cross-harness credit assignment. Figure 1: Controlled multi-harness training and harness-swap evaluation. Four production
+harnesses collect trajectories and rewards from the same SWE-Gym task pool; the frozen manifest
+holds records, tokens, and rewards fixed across the primary arms. Cross pools same-task traces
+across harnesses when constructing GRPO groups, whereas Within assigns credit separately within
+each task–harness pair. Checkpoints are graded by the same sealed oracle on the source
+harnesses and an unseen minimal harness. Source-profile changes combine portable improvement
+with configuration adaptation; held-out changes isolate the component that survives the
+harness swap. The evaluation harness, not the training recipe, is the largest effect in the study. Letting
+harnesses compete for credit changes which trajectories carry gradient and leaves everything
+downstream of that in place: the held-out score, and the policy’s action distribution inside
+each harness. Seeing several harnesses and comparing them for credit are separate
+interventions , and the second does not by itself make the learned policy harness-independent. Contributions. • A controlled recipe-by-harness matrix under one sealed oracle. The evaluation harness
+moves solve rate by a factor of 4.3 where the training recipe moves it by
+1.16, and harness strength differs between model families. • A same-data, same-budget experiment that isolates the GRPO grouping boundary across four
+production coding harnesses and scores every checkpoint under a harness held out of training.
+Cross and Within are indistinguishable there, with or without re-collecting the data on-policy,
+and both place their largest gains on the same source harness. • A direct measurement of the harness identity each credit rule leaves in the advantage,
++4.48 pp \,\mathrm{pp} above its null under pooling and none under within-harness grouping, and of
+what that identity changes downstream: the same held-out score and the same action distribution
+inside each harness either way. 2 Related work Harnesses as an evaluation variable. Harness-Bench, standardized leaderboards, and configuration-level audits show that agent scores,
+costs, and failures depend on model–harness pairing ( Yao et al., 2026 ; Zhang et al., 2026 ; Kapoor et al., 2025 ; Kapoor et al., 2024 ) . The same
+concern motivates agent suites that fix the interface as part of the benchmark ( Liu et al., 2024 ; Mialon et al., 2023 ; Zhou et al., 2024a ; Yao et al., 2025 ) and audits of how much
+of a reported score is a property of the benchmark rather than the model ( Liang et al., 2023 ; Dehghani et al., 2021 ; Singh et al., 2025 ; Biderman et al., 2024 ) . We measure that heterogeneity on our own checkpoints (Section 4 ) and use it to pose a training question. Harness-native reinforcement learning. Polar, Tmax, OpenForgeRL, and related systems make policy optimization through production
+harnesses practical and report substantial native-harness gains ( Xu and others, 2026 ; Ivison et al., 2026 ; Yu and others, 2026 ) . For repository-level coding specifically, SWE-RL and
+SWE-Gym establish the outcome-reward recipe we replay ( Wei et al., 2025 ; Pan et al., 2025 ) , and
+parallel lines train agents through device, web and search interfaces ( Bai et al., 2024 ; Qi et al., 2025 ; Jin et al., 2025 ; Wang et al., 2025b ) . They study infrastructure,
+scaling, and native-harness performance. Our question is how outcomes from several native
+harnesses should interact in the relative-credit estimator. Multi-harness training and transfer. Kimi K3, OpenForgeRL, and other frontier recipes vary heterogeneous harness exposure as part of a
+larger post-training stack ( Kimi Team, 2026 ; Yu and others, 2026 ; Huang and others, 2026 ; NVIDIA, 2026 ) .
+HarnessX pools same-task traces across evolving harness versions ( Chen and others, 2026 ) , ClawGym
+II normalizes within each task–harness pair before mixed gradient updates ( Song et al., 2026 ) , and harness design has begun to be studied as a post-training variable in
+its own right ( Kim et al., 2026 ; Foundation Model Team, Li Auto Inc., 2026 ) . That disagreement motivates a comparison
+in which the trajectory manifest and update budget stay fixed and only the grouping boundary
+moves, with source-configuration effects separated from held-out portability. Where credit is assigned. Most work on credit assignment in large language model (LLM) RL refines the resolution of the
+signal: per-step value
+estimates ( Kazemnejad et al., 2024 ) , hierarchical turn-level objectives ( Zhou et al., 2024b ; Feng et al., 2025 ) , hindsight reassignment over long horizons ( Tan and others, 2026 ) , or process supervision that scores intermediate steps ( Uesato et al., 2022 ; Lightman et al., 2024 ; Wang et al., 2024 ) . A second line asks
+what the group-relative baseline itself normalizes away, and corrects its length and difficulty
+bias ( Liu et al., 2025b ; Yu et al., 2025 ; Ahmadian et al., 2024 ) . Both take the set of trajectories that
+compete for credit as given. We vary that set instead: the resolution of the reward is fixed at
+one binary outcome per episode, and only the boundary of the comparison group moves. What RL adds over the starting policy. Whether outcome-reward RL creates capability or reweights what the base model already does is
+contested ( Yue et al., 2025 ; Chu et al., 2025 ; Zeng et al., 2025 ; Liu et al., 2025a ; Guo et al., 2025 ) , and the
+answer depends on how capability is measured. Spurious or misspecified rewards can move a score
+without moving the underlying skill ( Shao et al., 2025 ; Skalse et al., 2022 ) , and RLHF narrows
+diversity while raising the headline number ( Kirk et al., 2024 ; Singhal et al., 2023 ) . Our
+setting adds a second axis to that question. Even granting that a gain is real on the harness that
+produced the data, it may be a property of the model–harness pair rather than of the model. Evaluating under an unseen harness separates the two, and that measurement is what the rest of
+this paper is built around. 3 Separating exposure from credit assignment Let an episode be indexed by task x x , harness h h , and rollout i i , with sealed-oracle reward r x , h , i ∈ { 0 , 1 } r_{x,h,i}\in\{0,1\} . Both primary arms train on the same frozen manifest. They differ only in
+where the relative-credit boundary is drawn: A x , h , i Within \displaystyle A^{\mathrm{Within}}_{x,h,i} = r x , h , i − μ x , h σ x , h + ε , \displaystyle=\frac{r_{x,h,i}-\mu_{x,h}}{\sigma_{x,h}+\varepsilon}, G x , h Within \displaystyle G^{\mathrm{Within}}_{x,h} = { τ x , h , i } i , \displaystyle=\{\tau_{x,h,i}\}_{i}, (1) A x , h , i Cross \displaystyle A^{\mathrm{Cross}}_{x,h,i} = r x , h , i − μ x σ x + ε , \displaystyle=\frac{r_{x,h,i}-\mu_{x}}{\sigma_{x}+\varepsilon}, G x Cross \displaystyle G^{\mathrm{Cross}}_{x} = { τ x , h , i } h , i . \displaystyle=\{\tau_{x,h,i}\}_{h,i}. (2) Both rules are group-relative in the sense of GRPO ( Shao et al., 2024 ) : the advantage is
+a standardized reward within a group of sampled trajectories. It sits with the
+baseline-subtracting policy-gradient methods ( Williams, 1992 ; Ahmadian et al., 2024 ) rather
+than with the learned-critic objectives used in earlier reinforcement-learning-from-human-feedback
+(RLHF) pipelines ( Schulman et al., 2017 ; Ouyang et al., 2022 ) . That
+standardization is not neutral. Its mean and scale terms are known to introduce composition-dependent
+bias, which motivates the length and difficulty corrections proposed for single-harness training ( Liu et al., 2025b ; Yu et al., 2025 ) . A harness-heterogeneous group changes exactly that composition,
+which is why we isolate the boundary experimentally instead of assuming it away. Within uses heterogeneous harnesses as parallel sources of experience without comparing their
+rewards. Cross uses the same records but makes outcomes from different harnesses compete. For a trained arm a a relative to the common supervised fine-tuned (SFT) warm start θ SFT \theta_{\mathrm{SFT}} , we report two profiles: G source ​ ( a ) \displaystyle G_{\mathrm{source}}(a) = 𝔼 h ∈ H train , x ​ [ Y ⁡ ( θ a , h , x ) − Y ⁡ ( θ SFT , h , x ) ] , \displaystyle=\mathbb{E}_{h\in H_{\mathrm{train}},x}\left[Y(\theta_{a},h,x)-Y(\theta_{\mathrm{SFT}},h,x)\right], (3) G heldout ​ ( a ) \displaystyle G_{\mathrm{heldout}}(a) = 𝔼 h ∉ H train , x ​ [ Y ⁡ ( θ a , h , x ) − Y ⁡ ( θ SFT , h , x ) ] . \displaystyle=\mathbb{E}_{h\notin H_{\mathrm{train}},x}\left[Y(\theta_{a},h,x)-Y(\theta_{\mathrm{SFT}},h,x)\right]. (4) The source profile can contain portable model change as well as adaptation to source
+configurations. The held-out profile tests portability. Both arms start from the same checkpoint,
+replay the same experience, use the same reward and loss definitions, receive the same number of
+updates, and are scored by the same evaluation. The grouping boundary is the only component that
+changes, from task × \times harness under Within to task, pooling harnesses under Cross. The coverage-matched and
+residualized arms of Section 6 reuse the same corpus and update budget. They change what enters the pooled group rather than where its boundary lies. The primary crossed campaign evaluates six checkpoints on four source harnesses over 500
+SWE-bench Verified ( Jimenez et al., 2024 ; Chowdhury et al., 2024 ) tasks at two attempts per task, or 24,000 attempted episodes, of which
+99.1% returned a usable sealed-oracle verdict.
+It evaluates the same six checkpoints on the held-out weak-ReAct interface over the same roster
+at k = 4 k{=}4 , and the SFT, Within and Cross checkpoints again at k = 8 k{=}8 , the three checkpoints the
+primary held-out contrasts need. Both profiles in
+Equation 4 come from one set of weights per arm, so the split decomposes each
+checkpoint rather than comparing training runs. The Within and Cross
+arms were also re-trained under two further seeds, and one further Cross arm re-collected its
+second half of training data on-policy. All of these are scored on the held-out interface at k = 4 k{=}4 . The six held-out contrasts were fixed before any checkpoint existed, and all contrasts
+are task-paired. Infrastructure
+failures are quarantined rather than scored as model failures. Appendices D , F , and L give the design, version pins, and completeness gates. Figure 2: Solve rate for every training recipe under every source harness, over the same
+24,000 sealed-oracle evaluations; shading encodes the number printed in the cell and
+harnesses are ordered by column mean. Columns darken from left to right while rows stay flat.
+Harness means run from 2.14% to 9.27%, a 7.13 ​ pp 7.13\,\mathrm{pp} span; the recipe means in the right-hand margin span only 5.55% to 6.46%, or 0.91 0.91 . 4 The evaluation harness dominates the training recipe Across evaluation harnesses, the mean solve rate varies by a factor of 4.3; across
+training recipes, it varies by 1.16 (Figure 2 ). Harness means run
+from 2.14% to 9.27% over the same 24,000 sealed evaluations, while the
+six recipe means sit between 5.55% and 6.46%. Recent evaluations document the same
+model–harness dependence ( Yao et al., 2026 ; Zhang et al., 2026 ; Kapoor et al., 2025 ) ,
+and smaller configuration choices move scores the same way: which scaffold is used ( Xia et al., 2024 ) , how the prompt is formatted ( Sclar et al., 2024 ) , and how the
+leaderboard itself is built ( Liang et al., 2023 ; Singh et al., 2025 ) . The harnesses differ in success priors, observation streams, reachable states, tool
+vocabularies, and control flow, and the spread they produce is not a fixed property of the
+interface. On the same 500 500 tasks, Seed-Coder-8B scores alike with Qwen3-8B under the minimal
+harness, yet Aider and SWE-agent, neutral for Qwen3-8B, each cost it about 4 ​ pp 4\,\mathrm{pp} against its own
+minimal-harness score, and two further harnesses cannot run for it at all
+(Table 5 ). Harness strength is not one model-independent scalar that could be
+subtracted from every model’s score. Under Cross, then, rewards from contexts that are not
+exchangeable in the usual same-prompt GRPO sense compete for credit. 5 Cross-harness credit adds no detectable portability On the interface excluded from training, the six recipes span 4.01 % 4.01\% to 4.73 % 4.73\% (Figure 3 a, Table 2 ). That range is narrower than the smallest
+difference any of the six held-out contrasts can detect at 80 % 80\% power, and nearly an order of
+magnitude below the 7.13 ​ pp 7.13\,\mathrm{pp} that the choice of harness moves the same checkpoints. No recipe,
+the supervised warm start included, separates from the untrained base here. At eight attempts
+per task, Cross minus Within is + 0.25 ​ pp +0.25\,\mathrm{pp} [ − 0.48 , + 1.02 ] [-0.48,+1.02] . Relative to
+the common supervised warm start, Within is − 0.03 ​ pp -0.03\,\mathrm{pp} [ − 0.64 , + 0.59 ] [-0.64,+0.59] and
+Cross is + 0.13 +0.13 [ − 0.65 , + 0.92 ] [-0.65,+0.92] . Every interval includes zero. With exposure held
+fixed, letting outcomes from different harnesses compete leaves the held-out score where
+within-harness credit leaves it. Figure 3: (a) Under the harness excluded from training, no recipe separates from any
+other. Solve rate on the held-out weak-ReAct interface, SWE-bench Verified, four attempts
+per task on the 499 499 tasks gradeable in every arm, recipes in the order of
+Figure 2 . The axis is truncated and every bar is broken, so bar height is not
+proportional to the score. The ruler is the smallest difference the narrowest of the six
+held-out contrasts can detect, and it is taller than the spread of the six recipes. Doubling
+the budget shrinks the two re-run gaps to Cross − - Within = + 0.25 ​ pp =+0.25\,\mathrm{pp} and
+Cross − - SFT = + 0.13 ​ pp =+0.13\,\mathrm{pp} . Levels are in Table 2 , contrasts in
+Table 3 . (b) Harness identity recoverable from each arm’s advantage on the training manifest,
+in percentage points above that arm’s own shuffled-label null, with 95 % 95\% intervals from
+resampling tasks. Within sits at its null by construction, pooling carries +4.48 pp \,\mathrm{pp} ,
+coverage matching retains about a quarter of that, and the residualized arm as assembled
+retains all of it. Accuracies and slopes are in Table 9 . On the four training harnesses, Cross is + 0.77 ​ pp +0.77\,\mathrm{pp} above SFT, with non-negative point estimates in
+all four columns (+0.73 / +1.81 / 0.00 / +0.51). Those column differences are the Cross and SFT rows of
+Figure 2 subtracted, and are tabulated in Table 1 . This is the
+largest estimate in the study. Its 95 % 95\% interval is [ + 0.03 , + 1.52 ] [+0.03,+1.52] , and the 99 % 99\% interval
+corrected for five recipe comparisons is [ − 0.21 , + 1.75 ] [-0.21,+1.75] . OpenHands contributes + 1.81 ​ pp +1.81\,\mathrm{pp} to the pooled estimate. Within behaves the same way. Subtracting the same two rows of Figure 2 puts it + 0.48 ​ pp +0.48\,\mathrm{pp} above SFT on the training harnesses, again with its largest single-column gain on
+OpenHands ( + 1.71 ​ pp +1.71\,\mathrm{pp} against Cross’s + 1.81 +1.81 ). The two arms differ there by 0.28 ​ pp 0.28\,\mathrm{pp} , a fifth
+of the width of the Cross interval. Both arms concentrate their gains on the source
+configurations, a property of reinforcement learning on this corpus rather than of the grouping
+rule. Doubling attempts from four to eight lowers the smallest detectable difference from 1.19–1.42 to
+0.88–1.14 pp \,\mathrm{pp} , while Cross–Within moves from +0.58 to
++0.25 and Within–SFT from + 0.16 +0.16 to -0.03
+(Table 4 ). Both estimates move toward zero as precision improves. Pooling three
+training seeds at k = 4 k{=}4 narrows the Cross–Within interval to 1.14 ​ pp 1.14\,\mathrm{pp} , a smallest detectable difference near 0.8 ​ pp 0.8\,\mathrm{pp} , and the estimate there is +0.16. The single-seed estimate sits at the top of its own seed distribution. Re-training Within and
+Cross under two further seeds and scoring all three at k = 4 k{=}4 on the 499 499 tasks common to every
+run gives Cross minus Within of +0.62, +0.05 and − 0.20 ​ pp -0.20\,\mathrm{pp} for seeds
+17, 29 and 41 (Table 2 ). The sign flips between
+seeds of one design on one roster. Pooled, the contrast is +0.16 pp \,\mathrm{pp} [ − 0.41 , + 0.72 ] [-0.41,+0.72] , with
+42 tasks favoring Cross, 38 favoring Within and 419 tied, and each arm’s own seed range,
+0.45 pp \,\mathrm{pp} for Within and 0.42 for Cross, exceeds the difference between the
+arms. Re-collecting the data on-policy does not change this. A further Cross arm spends the same 81,216 81{,}216 updates from the same warm start, replays the frozen records for the first half only,
+and then re-runs the training tasks with the half-trained policy to collect the second half
+(Appendix D ). On the held-out harness it sits +0.13 pp \,\mathrm{pp} [ − 0.85 , + 1.10 ] [-0.85,+1.10] from offline Cross and +0.75 pp \,\mathrm{pp} [ − 0.10 , + 1.65 ] [-0.10,+1.65] from Within
+(Table 3 ). 6 The pooled advantage carries harness identity, without detectable consequence Pooling puts each harness’s own solve rate into the group mean. Under Equation 2 a rollout
+from a strong harness carries a positive offset that is predictable from h h alone, and if that
+offset drove learning, Cross would be crediting the policy for help the harness supplied. An
+outcome reward that is partly a property of the environment is the kind of misspecified signal
+that has been shown to move scores without tracking the intended quantity ( Skalse et al., 2022 ; Gao et al., 2023 ; Shao et al., 2025 ) . We measure how much of the
+offset each arm’s advantage retains. A classifier is trained out of fold to recover the
+generating harness from the advantage alone, with tasks hashed into five folds so that no task’s
+episodes sit in both train and test. Chance is 25 % 25\% over four harnesses, and each arm is scored
+against its own null, its accuracy after shuffling harness labels within each task on the same
+folds (Appendix I ). Within’s advantage carries nothing the classifier can use: +0.02 pp \,\mathrm{pp} above its null,
+with an interval spanning zero, as its construction requires (Figure 3 b,
+Table 9 ). Cross’s carries +4.48 pp \,\mathrm{pp} [ + 3.22 , + 5.83 ] [+3.22,+5.83] , and its advantage
+rises with the harness’s training-time solve rate at a slope of 2.4. Coverage matching,
+which zeroes the advantage on 55 % 55\% of traces and leaves the pooled comparison unchanged on the
+rest, retains +1.17 pp \,\mathrm{pp} [ + 0.20 , + 2.16 ] [+0.20,+2.16] . The contamination that pooling introduces is
+real and measurable, and Section 5 shows the two rules reaching the same held-out
+score. Harness identity in the credit signal leaves no mark on what the policy learns there. The residualized arm was built to remove the offset by subtracting a per-harness baseline before
+the pooled standardization, with each task’s own outcomes excluded from the baseline applied to
+it: b h ( − x ) \displaystyle b_{h}^{(-x)} = mean { r e ′ : h ( e ′ ) = h , x ( e ′ ) ≠ x } , \displaystyle=\operatorname{mean}\{r_{e^{\prime}}:h(e^{\prime})=h,\ x(e^{\prime})\neq x\}, (5) z e \displaystyle z_{e} = r e − b h ⁡ ( e ) ( − x ⁡ ( e ) ) , \displaystyle=r_{e}-b_{h(e)}^{(-x(e))}, (6) A e Resid \displaystyle A_{e}^{\mathrm{Resid}} = z e − z ¯ x σ x z + ε . \displaystyle=\frac{z_{e}-\bar{z}_{x}}{\sigma^{z}_{x}+\varepsilon}. (7) As assembled, it removed 9% of that offset. Every arm realized the same 81,200 81{,}200 optimizer steps at an effective-sample-size share of 0.993 0.993 or above
+(Table 7 ); what differed was the population behind the baseline. It was estimated
+on the full graded pool of 1,008 1{,}008 tasks, most of them failed by every harness, while training
+used the 183 183 tasks on which harnesses disagree, where per-harness solve rates are an order of
+magnitude higher. The arm’s advantage accordingly retains +4.54 pp \,\mathrm{pp} [ + 3.24 , + 5.90 ] [+3.24,+5.90] of
+recoverable harness identity, the same as Cross, and its endpoints match Cross’s: + 0.18 ​ pp +0.18\,\mathrm{pp} over SFT on the training harnesses and − 0.03 -0.03 [ − 1.03 , + 0.95 ] [-1.03,+0.95] relative to Cross on the held-out
+harness. A baseline estimated
+on the training population itself, and finer-grained credit that reaches the channels a scalar
+offset cannot (per-step value estimates, hierarchical or hindsight assignment, process
+supervision ( Kazemnejad et al., 2024 ; Zhou et al., 2024b ; Feng et al., 2025 ; Tan and others, 2026 ; Uesato et al., 2022 ; Lightman et al., 2024 ; Wang et al., 2024 ) ),
+are the next interventions this design can host. The policy’s actions show the same pattern from the behavioural side. Labelling every assistant turn
+in the evaluation transcripts with one action (search, inspect, edit, write a file, test, run a
+script, version control, planning tool, submit) gives each checkpoint an action distribution
+under each harness (Figure 4 , Appendix J ). Moving a checkpoint
+between harnesses changes that distribution by 0.17 to 0.35 bits of
+Jensen–Shannon divergence. Swapping SFT for Cross inside a harness changes it by
+0.0003 to 0.0029 bits, a factor of at least 59 smaller. On the
+held-out harness, Cross writes fewer whole files than SFT ( − 1.35 ​ pp -1.35\,\mathrm{pp} [ − 2.30 , − 0.40 ] [-2.30,-0.40] ),
+runs scripts more often ( + 0.66 ​ pp +0.66\,\mathrm{pp} [ + 0.29 , + 1.01 ] [+0.29,+1.01] ) and checks version control more
+( + 1.28 ​ pp +1.28\,\mathrm{pp} [ + 0.24 , + 2.40 ] [+0.24,+2.40] ). Search, inspection, editing and testing are unchanged. Inside
+OpenHands, Cross spends a few more turns inspecting and editing before it submits; inside Qwen
+Code and SWE-agent no category differs between the two checkpoints. The harness sets the action
+repertoire, and the credit rule does not change it. Figure 4: Action composition of the SFT and Cross checkpoints inside each harness. Each bar is
+the distribution of action labels over an episode’s assistant turns, averaged over the 500 500 SWE-bench Verified tasks, from the same evaluation episodes as Tables 1 and 2 . Within a harness the SFT and Cross bars are near-identical, with the
+Jensen–Shannon divergence between them at the right. Moving the same checkpoint between
+harnesses reorders the distribution: search and editing dominate under weak-ReAct,
+inspection under OpenHands, editing and the planning tool under Qwen Code, search and script
+execution under SWE-agent. Aider is not shown because its transcript is plain chat with no
+tool calls to label. A spot check of the labeller on 160 160 turns found 11 11 mislabelled, 8 8 of them under SWE-agent. 7 Discussion What multi-harness RL learns here. Cross-harness credit changes which trajectories carry signed gradient and puts the harness’s
+solve rate into the advantage. Neither change reaches the held-out score or the action
+distribution inside a harness, and for both rules the largest positive point estimate sits on
+the harness family that produced the data. The pattern, whichever grouping boundary is used, is configuration adaptation without portable capability : gains of the kind a deployment on
+the source configurations can use, and which only a harness swap distinguishes from
+internalization. Scope of the result. The design asks one question: with exposure held fixed, what does comparing rewards across
+harnesses add? Systems that report multi-harness gains also use larger task pools ( Yang et al., 2025 ) , train longer ( Liu et al., 2025a ) , combine supervision stages ( Lambert et al., 2024 ) , or co-evolve the harness ( Ivison et al., 2026 ; Yu and others, 2026 ; Kimi Team, 2026 ; Chen and others, 2026 ; Song et al., 2026 ) . Each is a separate
+intervention from the one isolated here. Evaluation recommendation. A multi-harness RL report should state which harnesses generated experience, whether advantage
+normalization crosses harness boundaries, the source-harness deltas, and the deltas under at
+least one unseen harness. The first two specify the algorithm; the latter two separate source
+adaptation from portable capability. 8 Conclusion The harness a coding agent runs through moves its solve rate by a factor of
+4.3; the recipe that trained it moves it by 1.16. Multi-harness
+exposure and cross-harness credit assignment are distinct interventions. Holding the first fixed
+while varying the second alters the learning signal, and the harness identity it carries, but
+not the held-out score, even when half the training data is re-collected on-policy. The
+policy’s action distribution is set by the harness it runs in, not by the credit rule. The gains
+that replaying multi-harness experience does produce sit on the training harnesses, not on the
+held-out one, and comparing harnesses for credit does not change that.
+Multi-harness RL studies should report the grouping boundary and
+test portability under an unseen interface. 9 Limitations Every estimate other than the Within and Cross held-out levels rests on one checkpoint, and
+the source harnesses were evaluated at two attempts per task. Absolute solve rates are low
+( 1 1 – 10 % 10\% ) and the endpoint is binary. Training covers one model family ( Qwen Team, 2025b ; Hui et al., 2024 ) , one budget, four source harnesses, one round of
+on-policy re-collection, and Python-only tasks. The second-model comparison uses one untrained
+checkpoint per model, under context budgets that differ between the two families, and a
+training comparison on Seed-Coder-8B would pool over the two source harnesses that can drive
+it. Multilingual, test-generation and contamination-hardened variants of the benchmark ( Zan et al., 2025 ; Mündler et al., 2024 ; Aleithan et al., 2024 ) , and the
+function-level regime that preceded it ( Chen et al., 2021 ) , lie outside the study. The design
+resolves differences of about 1 ​ pp 1\,\mathrm{pp} and larger. The six held-out contrasts were fixed before
+the checkpoints existed and not registered externally ( van Miltenburg et al., 2021 ) . References Agarwal et al. (2021) R. Agarwal, M. Schwarzer, P. S. Castro, A. Courville, and M. G. Bellemare Deep reinforcement learning at the edge of the statistical precipice . In Advances in Neural Information Processing Systems (NeurIPS) , Cited by: Appendix L . Ahmadian et al. (2024) A. Ahmadian, C. Cremer, M. Gallé, M. Fadaee, J. Kreutzer, O. Pietquin, A. Üstün, and S. Hooker Back to basics: revisiting REINFORCE-style optimization for learning from human feedback in LLMs . In Annual Meeting of the Association for Computational Linguistics (ACL) , Cited by: §2 , §3 . Aleithan et al. (2024) R. Aleithan, H. Xue, M. M. Mohajer, E. Nnorom, G. Uddin, and S. Wang SWE-bench+: enhanced coding benchmark for LLMs . External Links: 2410.06992 Cited by: §9 . Bai et al. (2024) H. Bai, Y. Zhou, M. Cemri, J. Pan, A. Suhr, S. Levine, and A. Kumar DigiRL: training in-the-wild device-control agents with autonomous reinforcement learning . External Links: 2406.11896 Cited by: §2 . Biderman et al. (2024) S. Biderman, H. Schoelkopf, L. Sutawika, L. Gao, J. Tow, B. Abbasi, A. F. Aji, P. S. Ammanamanchi, S. Black, J. Clive, et al. Lessons from the trenches on reproducible evaluation of language models . External Links: 2405.14782 Cited by: §2 . Bouthillier et al. (2021) X. Bouthillier, P. Delaunay, M. Bronzi, A. Trofimov, B. Nichyporuk, J. Szeto, N. Sepah, E. Raff, K. Madan, V. Voleti, et al. Accounting for variance in machine learning benchmarks . In Machine Learning and Systems (MLSys) , Cited by: Appendix L . Cameron and Miller (2015) A. C. Cameron and D. L. Miller A practitioner’s guide to cluster-robust inference . Journal of Human Resources 50 ( 2 ), pp. 317–372 . Cited by: Appendix L . Card et al. (2020) D. Card, P. Henderson, U. Khandelwal, R. Jia, K. Mahowald, and D. Jurafsky With little power comes great responsibility . In Empirical Methods in Natural Language Processing (EMNLP) , Cited by: Appendix L . Chen et al. (2021) M. Chen, J. Tworek, H. Jun, Q. Yuan, H. P. d. O. Pinto, J. Kaplan, H. Edwards, Y. Burda, N. Joseph, G. Brockman, et al. Evaluating large language models trained on code . External Links: 2107.03374 Cited by: §9 . Chen et al. (2026) T. Chen et al. HarnessX: a composable, adaptive, and evolvable agent harness foundry . Note: arXiv preprint arXiv:2606.14249v3 External Links: 2606.14249v3 Cited by: §1 , §2 , §7 . Chowdhury et al. (2024) N. Chowdhury, J. Aung, C. J. Shern, O. Jaffe, D. Sherburn, G. Starace, E. Mays, R. Dias, M. Aljubeh, M. Glaese, C. E. Jimenez, J. Yang, K. Liu, and A. Madry SWE-bench verified: a human-validated subset of SWE-bench . Note: OpenAI External Links: Link Cited by: §3 . Chu et al. (2025) T. Chu, Y. Zhai, J. Yang, S. Tong, S. Xie, D. Schuurmans, Q. V. Le, S. Levine, and Y. Ma SFT memorizes, RL generalizes: a comparative study of foundation model post-training . External Links: 2501.17161 Cited by: §2 . Dehghani et al. (2021) M. Dehghani, Y. Tay, A. A. Gritsenko, Z. Zhao, N. Houlsby, F. Diaz, D. Metzler, and O. Vinyals The benchmark lottery . External Links: 2107.07002 Cited by: Appendix L , §2 . Dodge et al. (2019) J. Dodge, S. Gururangan, D. Card, R. Schwartz, and N. A. Smith Show your work: improved reporting of experimental results . In Empirical Methods in Natural Language Processing (EMNLP) , Cited by: Appendix L . Efron and Tibshirani (1994) B. Efron and R. J. Tibshirani An introduction to the bootstrap . Chapman & Hall/CRC . Cited by: Appendix L . Feng et al. (2025) L. Feng, Z. Xue, T. Liu, and B. An Group-in-group policy optimization for LLM agent training . External Links: 2505.10978 Cited by: §2 , §6 . Foundation Model Team, Li Auto Inc. (2026) Foundation Model Team, Li Auto Inc. Mach-Mind-4-Flash technical report . Note: arXiv preprint arXiv:2607.09375v1 External Links: 2607.09375v1 Cited by: §2 . Gao et al. (2023) L. Gao, J. Schulman, and J. Hilton Scaling laws for reward model overoptimization . In International Conference on Machine Learning (ICML) , Cited by: §6 . Gauthier (2024) P. Gauthier Aider: AI pair programming in your terminal . Note: https://github.com/Aider-AI/aider Cited by: Appendix F , §1 . Guo et al. (2025) D. Guo, D. Yang, H. Zhang, J. Song, P. Wang, Q. Zhu, R. Xu, R. Zhang, S. Ma, X. Bi, et al. DeepSeek-R1 incentivizes reasoning in LLMs through reinforcement learning . Nature 645 , pp. 633–638 . Cited by: §2 . Holm (1979) S. Holm A simple sequentially rejective multiple test procedure . Scandinavian Journal of Statistics 6 ( 2 ), pp. 65–70 . Cited by: Appendix L . Huang et al. (2026) B. Huang et al. KAT-Coder-V2.5 technical report . Note: arXiv preprint arXiv:2607.05471v1 External Links: 2607.05471v1 Cited by: §2 . Hui et al. (2024) B. Hui, J. Yang, Z. Cui, J. Yang, D. Liu, L. Zhang, T. Liu, J. Zhang, B. Yu, K. Lu, et al. Qwen2.5-coder technical report . External Links: 2409.12186 Cited by: §9 . Ivison et al. (2026) H. Ivison, J. O. Yin, R. Shao, T. Xiao, N. Lambert, and H. Hajishirzi Tmax: a simple recipe for terminal agents . Note: arXiv preprint arXiv:2606.23321v1 External Links: 2606.23321v1 Cited by: §2 , §7 . Jimenez et al. (2024) C. E. Jimenez, J. Yang, A. Wettig, S. Yao, K. Pei, O. Press, and K. Narasimhan SWE-bench: can language models resolve real-world GitHub issues? . In International Conference on Learning Representations (ICLR) , Cited by: Appendix F , §3 . Jin et al. (2025) B. Jin, H. Zeng, Z. Yue, J. Yoon, S. Arik, D. Wang, H. Zamani, and J. Han Search-R1: training LLMs to reason and leverage search engines with reinforcement learning . External Links: 2503.09516 Cited by: §2 . Kapoor et al. (2025) S. Kapoor, B. Stroebl, P. Kirgis, N. Nadgir, Z. S. Siegel, B. Wei, et al. Holistic agent leaderboard: the missing infrastructure for AI agent evaluation . External Links: 2510.11977 Cited by: §2 , §4 . Kapoor et al. (2024) S. Kapoor, B. Stroebl, Z. S. Siegel, N. Nadgir, and A. Narayanan AI agents that matter . External Links: 2407.01502 Cited by: §2 . Kazemnejad et al. (2024) A. Kazemnejad, M. Aghajohari, E. Portelance, A. Sordoni, S. Reddy, A. Courville, and N. L. Roux VinePPO: refining credit assignment in RL training of LLMs . External Links: 2410.01679 Cited by: §2 , §6 . Kim et al. (2026) K. Kim, Y. Choi, S. Lee, S. Jun, D. Kim, and S. Park The interplay of harness design and post-training in LLM agents . Note: arXiv preprint arXiv:2606.25447v1 External Links: 2606.25447v1 Cited by: §2 . Kimi Team (2026) Kimi Team Kimi K3: open frontier intelligence . Note: arXiv preprint arXiv:2607.24653v2 External Links: 2607.24653v2 Cited by: §1 , §2 , §7 . Kirk et al. (2024) R. Kirk, I. Mediratta, C. Nalmpantis, J. Luketina, E. Hambro, E. Grefenstette, and R. Raileanu Understanding the effects of RLHF on LLM generalisation and diversity . In International Conference on Learning Representations (ICLR) , Cited by: §2 . Kwon et al. (2023) W. Kwon, Z. Li, S. Zhuang, Y. Sheng, L. Zheng, C. H. Yu, J. E. Gonzalez, H. Zhang, and I. Stoica Efficient memory management for large language model serving with PagedAttention . In Proceedings of the 29th Symposium on Operating Systems Principles (SOSP) , Cited by: Appendix F . Lambert et al. (2024) N. Lambert, J. Morrison, V. Pyatkin, S. Huang, H. Ivison, F. Brahman, L. J. V. Miranda, A. Liu, N. Dziri, S. Lyu, et al. Tulu 3: pushing frontiers in open language model post-training . External Links: 2411.15124 Cited by: §7 . Liang et al. (2023) P. Liang, R. Bommasani, T. Lee, D. Tsipras, D. Soylu, M. Yasunaga, Y. Zhang, D. Narayanan, Y. Wu, A. Kumar, et al. Holistic evaluation of language models . In Transactions on Machine Learning Research (TMLR) , Cited by: §2 , §4 . Lightman et al. (2024) H. Lightman, V. Kosaraju, Y. Burda, H. Edwards, B. Baker, T. Lee, J. Leike, J. Schulman, I. Sutskever, and K. Cobbe Let’s verify step by step . In International Conference on Learning Representations (ICLR) , Cited by: §2 , §6 . Liu et al. (2025a) M. Liu, S. Diao, X. Lu, J. Hu, X. Dong, Y. Choi, J. Kautz, and Y. Dong ProRL: prolonged reinforcement learning expands reasoning boundaries in large language models . External Links: 2505.24864 Cited by: §2 , §7 . Liu et al. (2024) X. Liu, H. Yu, H. Zhang, Y. Xu, X. Lei, H. Lai, Y. Gu, H. Ding, K. Men, K. Yang, et al. AgentBench: evaluating LLMs as agents . In International Conference on Learning Representations (ICLR) , Cited by: §2 . Liu et al. (2025b) Z. Liu, C. Chen, W. Li, P. Qi, T. Pang, C. Du, W. S. Lee, and M. Lin Understanding R1-zero-like training: a critical perspective . External Links: 2503.20783 Cited by: Appendix E , §2 , §3 . Madaan et al. (2024) L. Madaan, A. K. Singh, R. Schaeffer, A. Poulton, S. Koyejo, P. Stenetorp, S. Narang, and D. Hupkes Quantifying variance in evaluation benchmarks . External Links: 2406.10229 Cited by: Appendix L . Mialon et al. (2023) G. Mialon, C. Fourrier, C. Swift, T. Wolf, Y. LeCun, and T. Scialom GAIA: a benchmark for general AI assistants . External Links: 2311.12983 Cited by: §2 . Miller (2024) E. Miller Adding error bars to evals: a statistical approach to language model evaluations . External Links: 2411.00640 Cited by: Appendix L . Mündler et al. (2024) N. Mündler, M. N. Mueller, J. He, and M. Vechev SWT-bench: testing and validating real-world bug-fixes with code agents . In Advances in Neural Information Processing Systems (NeurIPS) , Cited by: §9 . NVIDIA (2026) NVIDIA Nemotron 3 Super: open, efficient mixture-of-experts hybrid Mamba-transformer model for agentic reasoning . Note: arXiv preprint arXiv:2604.12374v1 External Links: 2604.12374v1 Cited by: §2 . Ouyang et al. (2022) L. Ouyang, J. Wu, X. Jiang, D. Almeida, C. Wainwright, P. Mishkin, C. Zhang, S. Agarwal, K. Slama, A. Ray, et al. Training language models to follow instructions with human feedback . In Advances in Neural Information Processing Systems (NeurIPS) , Cited by: §3 . Pan et al. (2025) J. Pan, X. Wang, G. Neubig, N. Jaitly, H. Ji, A. Suhr, and Y. Zhang Training software engineering agents and verifiers with SWE-gym . In International Conference on Machine Learning (ICML) , Cited by: item SFT , Appendix G , §1 , §2 . Peng et al. (2026) B. Peng et al. Orchard: an open-source agentic modeling framework . Note: arXiv preprint arXiv:2605.15040v3 External Links: 2605.15040v3 Cited by: Appendix K . Qi et al. (2025) Z. Qi, X. Liu, I. L. Iong, H. Lai, X. Sun, W. Zhao, Y. Yang, X. Yang, J. Sun, S. Yao, et al. WebRL: training LLM web agents via self-evolving online curriculum reinforcement learning . External Links: 2411.02337 Cited by: §2 . Qwen Team (2025a) Qwen Team Qwen code: command-line coding agent for Qwen models . Note: https://github.com/QwenLM/qwen-code Cited by: Appendix F , §1 . Qwen Team (2025b) Qwen Team Qwen3 technical report . External Links: 2505.09388 Cited by: §1 , §9 . Schulman et al. (2017) J. Schulman, F. Wolski, P. Dhariwal, A. Radford, and O. Klimov Proximal policy optimization algorithms . External Links: 1707.06347 Cited by: §3 . Sclar et al. (2024) M. Sclar, Y. Choi, Y. Tsvetkov, and A. Suhr Quantifying language models’ sensitivity to spurious features in prompt design . In International Conference on Learning Representations (ICLR) , Cited by: §4 . Shao et al. (2025) R. Shao, S. S. Li, R. Xin, S. Geng, Y. Wang, S. Oh, S. S. Du, N. Lambert, S. Min, R. Krishna, Y. Tsvetkov, H. Hajishirzi, P. W. Koh, and L. Zettlemoyer Spurious rewards: rethinking training signals in RLVR . External Links: 2506.10947 Cited by: §2 , §6 . Shao et al. (2024) Z. Shao, P. Wang, Q. Zhu, R. Xu, J. Song, M. Zhang, Y. K. Li, Y. Wu, and D. Guo DeepSeekMath: pushing the limits of mathematical reasoning in open language models . External Links: 2402.03300 Cited by: Appendix E , §1 , §3 . Shinn et al. (2023) N. Shinn, F. Cassano, A. Gopinath, K. Narasimhan, and S. Yao Reflexion: language agents with verbal reinforcement learning . In Advances in Neural Information Processing Systems (NeurIPS) , Cited by: Appendix K . Singh et al. (2025) S. Singh, Y. Nan, A. Wang, D. D’Souza, S. Kapoor, A. Üstün, S. Koyejo, Y. Deng, S. Longpre, N. A. Smith, et al. The leaderboard illusion . External Links: 2504.20879 Cited by: §2 , §4 . Singhal et al. (2023) P. Singhal, T. Goyal, J. Xu, and G. Durrett A long way to go: investigating length correlations in RLHF . External Links: 2310.03716 Cited by: §2 . Skalse et al. (2022) J. Skalse, N. H. R. Howe, D. Krasheninnikov, and D. Krueger Defining and characterizing reward hacking . In Advances in Neural Information Processing Systems (NeurIPS) , Cited by: §2 , §6 . Song et al. (2026) H. Song, F. Bai, M. Yang, R. Li, J. Deng, J. He, Z. Zhang, D. Cheng, Y. Xing, Q. Yun, X. Chen, D. Li, F. Chang, C. Hao, R. Tao, J. Yang, B. Dai, W. X. Zhao, M. Tang, and J. Wen ClawGym II: exploring black-box RL on agent harness . External Links: 2608.16798 Cited by: §1 , §1 , §2 , §7 . Tan et al. (2026) H. Tan et al. Hindsight credit assignment for long-horizon LLM agents . Note: arXiv preprint arXiv:2603.08754v1 External Links: 2603.08754v1 Cited by: §2 , §6 . Uesato et al. (2022) J. Uesato, N. Kushman, R. Kumar, F. Song, N. Siegel, L. Wang, A. Creswell, G. Irving, and I. Higgins Solving math word problems with process- and outcome-based feedback . External Links: 2211.14275 Cited by: §2 , §6 . van Miltenburg et al. (2021) E. van Miltenburg, C. van der Lee, and E. Krahmer Preregistering NLP research . In North American Chapter of the Association for Computational Linguistics (NAACL) , Cited by: §9 . Wang et al. (2024) P. Wang, L. Li, Z. Shao, R. Xu, D. Dai, Y. Li, D. Chen, Y. Wu, and Z. Sui Math-shepherd: verify and reinforce LLMs step-by-step without human annotations . In Annual Meeting of the Association for Computational Linguistics (ACL) , Cited by: §2 , §6 . Wang et al. (2025a) X. Wang, B. Li, Y. Song, F. F. Xu, X. Tang, M. Zhuge, J. Pan, Y. Song, B. Li, J. Singh, H. H. Tran, F. Li, R. Ma, M. Zheng, B. Qian, Y. Shao, N. Muennighoff, Y. Zhang, B. Hui, J. Lin, R. Brennan, H. Peng, H. Ji, and G. Neubig OpenHands: an open platform for AI software developers as generalist agents . In International Conference on Learning Representations (ICLR) , Cited by: Appendix F , §1 . Wang et al. (2025b) Z. Wang, K. Wang, Q. Wang, P. Zhang, L. Li, Z. Yang, K. Yu, M. Nguyen, L. Liu, E. Gottlieb, et al. RAGEN: understanding self-evolution in LLM agents via multi-turn reinforcement learning . External Links: 2504.20073 Cited by: §2 . Wei et al. (2025) Y. Wei, O. Duchenne, J. Copet, Q. Carbonneaux, L. Zhang, D. Fried, G. Synnaeve, R. Singh, and S. I. Wang SWE-RL: advancing LLM reasoning via reinforcement learning on open software evolution . External Links: 2502.18449 Cited by: §2 . Williams (1992) R. J. Williams Simple statistical gradient-following algorithms for connectionist reinforcement learning . Machine Learning 8 , pp. 229–256 . Cited by: §3 . Wu et al. (2023) Q. Wu, G. Bansal, J. Zhang, Y. Wu, B. Li, E. Zhu, L. Jiang, X. Zhang, S. Zhang, J. Liu, et al. AutoGen: enabling next-gen LLM applications via multi-agent conversation . External Links: 2308.08155 Cited by: Appendix K . Xia et al. (2024) C. S. Xia, Y. Deng, S. Dunn, and L. Zhang Agentless: demystifying LLM-based software engineering agents . External Links: 2407.01489 Cited by: §4 . Xu et al. (2026) B. Xu et al. Polar: agentic RL on any harness at scale . Note: arXiv preprint arXiv:2605.24220v1 External Links: 2605.24220v1 Cited by: Appendix K , §1 , §2 . Yang et al. (2024) J. Yang, C. E. Jimenez, A. Wettig, K. Lieret, S. Yao, K. Narasimhan, and O. Press SWE-agent: agent-computer interfaces enable automated software engineering . In Advances in Neural Information Processing Systems (NeurIPS) , Cited by: Appendix F , §1 . Yang et al. (2025) J. Yang, K. Leret, C. E. Jimenez, A. Wettig, K. Khandpur, Y. Zhang, B. Hui, O. Press, L. Schmidt, and D. Yang SWE-smith: scaling data for software engineering agents . External Links: 2504.21798 Cited by: §7 . Yao et al. (2025) S. Yao, N. Shinn, P. Razavi, and K. Narasimhan τ \tau -Bench: a benchmark for tool-agent-user interaction in real-world domains . In International Conference on Learning Representations (ICLR) , Cited by: §2 . Yao et al. (2023) S. Yao, J. Zhao, D. Yu, N. Du, I. Shafran, K. Narasimhan, and Y. Cao ReAct: synergizing reasoning and acting in language models . In International Conference on Learning Representations (ICLR) , Cited by: Appendix K , Appendix F . Yao et al. (2026) Y. Yao, X. Tan, C. Liu, Y. Li, Z. Wang, W. Yu, Z. Tan, Y. Tian, G. Zhao, L. Sun, X. Zhang, and T. Yang Harness-bench: measuring harness effects across models in realistic agent workflows . External Links: 2605.27922 Cited by: §2 , §4 . Yu et al. (2025) Q. Yu, Z. Zhang, R. Zhu, Y. Yuan, X. Zuo, Y. Yue, T. Fan, G. Liu, L. Liu, X. Liu, et al. DAPO: an open-source LLM reinforcement learning system at scale . External Links: 2503.14476 Cited by: Appendix E , Appendix G , §2 , §3 . Yu et al. (2026) X. Yu et al. OpenForgeRL: train harness-native agents in any environment . Note: arXiv preprint arXiv:2607.21557v3 External Links: 2607.21557v3 Cited by: Appendix K , §1 , §2 , §2 , §7 . Yue et al. (2025) Y. Yue, Z. Chen, R. Lu, A. Zhao, Z. Wang, Y. Yue, S. Song, and G. Huang Does reinforcement learning really incentivize reasoning capacity in LLMs beyond the base model? . External Links: 2504.13837 Cited by: §2 . Zan et al. (2025) D. Zan, Z. Huang, W. Liu, H. Chen, L. Zhang, S. Xin, L. Chen, Q. Liu, X. Zhong, A. Li, et al. Multi-SWE-bench: a multilingual benchmark for issue resolving . External Links: 2504.02605 Cited by: §9 . Zeng et al. (2025) W. Zeng, Y. Huang, Q. Liu, W. Liu, K. He, Z. Ma, and J. He SimpleRL-Zoo: investigating and taming zero reinforcement learning for open base models in the wild . External Links: 2503.18892 Cited by: §2 . Zhang et al. (2026) Y. Zhang, J. Wang, Y. Ge, W. Xu, J. Hamm, and C. K. Reddy Stop comparing LLM agents without disclosing the harness . External Links: 2605.23950 Cited by: §2 , §4 . Zhou et al. (2024a) S. Zhou, F. F. Xu, H. Zhu, X. Zhou, R. Lo, A. Sridhar, X. Cheng, T. Ou, Y. Bisk, D. Fried, et al. WebArena: a realistic web environment for building autonomous agents . In International Conference on Learning Representations (ICLR) , Cited by: §2 . Zhou et al. (2024b) Y. Zhou, A. Zanette, J. Pan, S. Levine, and A. Kumar ArCHer: training language model agents via hierarchical multi-turn RL . External Links: 2402.19446 Cited by: §2 , §6 . Appendix A AI use statement We used generative AI tools (Claude, Anthropic; and ChatGPT, OpenAI, for review-style critique of
+drafts) to refine hypotheses, review methods and analysis plans, check interpretations, edit
+prose, generate and refactor code, design figures, and support literature searches. The authors
+reviewed all AI-assisted analysis code. Released artifact scripts emit every reported number from
+result files. No result was transcribed from AI output. We verified AI-suggested citations against
+the cited sources and did not use generative AI to fabricate, select, or alter experimental data
+or verdicts. The authors take responsibility for the final text, claims, code, and artifacts. Appendix B Broader impacts and ethics Agent benchmark scores inform model ranking, procurement, deployment, and safety evaluation, yet
+leaderboards often leave the harness configuration underspecified. In our matrix, the same policy
+scores 2.1 % 2.1\% or 9.3 % 9.3\% depending on the harness. A deployment measured with a strong
+scaffold may therefore be integrated behind a weaker one, while a safety estimate may miss what
+the model can do with a better scaffold. We did not identify a harm pathway created by publishing
+this analysis. Reports should specify the harness, task set, grader, and
+rollout count, and should separate same-harness from held-out gains. Held-out evaluation requires
+additional rollout and grading compute, but no new evaluation concept. Appendix C Reproducibility Every number in this paper was emitted by an artifact script. The source matrix, held-out k = 4 k{=}4 levels, held-out k = 8 k{=}8 recheck, seed variance,
+re-collected arm, second-model harness comparison, advantage-identity diagnostic, action composition and
+manifest statistics are committed as JSON artifacts under results/postfreeze_2026q3/ , each recomputed from the graded episode pools by one
+verdict classifier. The k = 8 k{=}8 file is the unmodified output of pf_t4_report.py --k8 --common-rows . The six held-out k = 4 k{=}4 contrasts and the
+smallest differences they can detect come from pf_phase1_verdicts.py --eval v500 and are carried from
+the append-only run log with the command that produced them. The
+analysis plan, per-contrast decision rules, the grading oracle and the full validity-audit
+timeline are part of the release.
+Rollout generation is not bit-reproducible (continuous-batching nondeterminism), so all statistics
+are task-clustered and paired, with k ≥ 4 k\geq 4 wherever the rollout level matters. Internal artifact
+identifiers map to paper names as crossdown = = coverage-matched and residmatched = = residualized. Appendix D The crossed study: design and full tables Design. Four RL arms branch from a single supervised warm start trained on 8,841 8{,}841 trajectory records drawn from 186 186 tasks across the four production harnesses. Each arm replays the
+same 81,216 81{,}216 records drawn from 183 183 tasks under the same optimizer, batching, token budget,
+reward, and loss masking; they differ in how advantages are grouped and in what enters the
+group: within-harness, pooled cross-harness, pooled with coverage matching, or pooled after
+subtracting an out-of-fold per-harness baseline. Each arm has one RL seed, and the Within and
+Cross arms two further seeds scored on the held-out profile only. Evaluation uses SWE-bench
+Verified under a sealed per-instance oracle with four-state verdicts, infrastructure failures
+excluded rather than scored zero. Re-collected arm. One further Cross arm tests whether replaying frozen records
+limits what the grouping rule can do. It starts from the same warm start and spends the same 81,216 81{,}216 updates, but replays the frozen manifest only for the first half. The half-trained
+policy then re-runs the 183 183 training tasks through the four harnesses; 131 131 of them still
+produce a mix of outcomes and form the groups for the second half. The importance ratio at the
+first step of that half was 1.000 1.000 with an effective-sample-size share of 1.000 1.000 , so the
+second half trained on its own rollouts. Its held-out level at k = 4 k{=}4 is 4.85 % 4.85\% on the 500 500 tasks gradeable in it and in the offline Cross, Within and SFT arms; the contrasts are in
+Table 3 . Table 1: Solve rate (%) by training recipe and evaluation harness. SWE-bench Verified,
+avg@2 (the mean over two attempts per task), oracle verdicts only, 24,000 attempted
+episodes at 99.1% verdict coverage; each column is restricted to the tasks scoreable in all six rows. Row means average
+the four columns. Training recipe Aider OpenHands Qwen Code SWE-agent Row mean Base (no training) 2.59 8.13 7.44 4.04 5.55 SFT warm start 1.97 8.53 7.44 4.85 5.70 Within-harness RL 1.66 10.24 6.94 5.86 6.18 Pooled cross-harness RL 2.70 10.34 7.44 5.35 6.46 + coverage matching 1.76 9.04 6.54 5.76 5.77 + residualization 2.18 9.34 7.55 4.44 5.88 Column mean 2.14 9.27 7.23 5.05 Tasks in column 482 498 497 495 Table 2: Held-out solve levels by training recipe, on the interface excluded from
+training, and the source data for Figure 3 a. weak-ReAct × \times SWE-bench
+Verified, oracle-only. Each entry is the mean over tasks of the task’s solve rate across its
+graded attempts, the same quantity the contrasts in Table 3 average, so at k = 4 k{=}4 a difference of two levels here reproduces the paired contrast there to within 0.01 ​ pp 0.01\,\mathrm{pp} . The k = 4 k{=}4 levels are on the 499 499 tasks gradeable in all six arms and the k = 8 k{=}8 levels on the 500 500 tasks gradeable in the three re-run arms, at 98.0 98.0 – 99.7 % 99.7\% and 98.6 98.6 – 99.3 % 99.3\% verdict coverage. The seed column re-trains the two primary arms under two
+further seeds and scores all three at k = 4 k{=}4 on the 499 499 tasks gradeable in every seed run;
+the seed ranges are 0.45 pp \,\mathrm{pp} for Within and 0.42 for Cross. Training recipe avg@4 (%) avg@8 (%) avg@4 by seed 17 / 29 / 41 (%) Base (no training) 4.07 — — SFT warm start 4.01 4.38 — Within-harness RL 4.11 4.28 4.11 / 4.26 / 4.56 Pooled cross-harness RL 4.73 4.38 4.73 / 4.31 / 4.36 + coverage matching 4.44 — — + residualization 4.69 — — Table 3: Every contrast in the crossed study. Each is a mean of per-task differences with a
+bootstrap interval from resampling tasks. The k = 4 k{=}4 held-out block is the six comparisons the
+analysis plan fixed before these checkpoints existed. The corrected 99 % 99\% interval for the
+seen contrast uses Bonferroni over the five recipe comparisons. The k = 8 k{=}8 rows first
+intersect the three densified rows at seven or more of eight gradeable rollouts ( 486 486 tasks),
+then pair strictly on tasks with all eight rollouts in both arms, so each k = 8 k{=}8 contrast
+rests on its own subset of that intersection and the three are not additive. The three-seed row pools the seed-17 checkpoints with two re-trainings of each arm; the per-seed contrasts, + 0.62 +0.62 , + 0.05 +0.05 and − 0.20 ​ pp -0.20\,\mathrm{pp} , are single checkpoint pairs and carry no interval. The re-collected rows compare the Cross arm
+whose second half of updates trained on rollouts from the half-trained policy
+(Appendix D ) with the offline arms, on the 500 500 tasks gradeable in all four.
+Levels are in Table 2 . Profile Contrast Δ \Delta pp 95% CI Tasks Seen, four harnesses Pooled cross − - SFT +0.77 [+0.03, +1.52] 500, avg@2 corrected, five comparisons [-0.21, +1.75] 99% CI Held-out, k = 4 k{=}4 SFT − - Base -0.07 [-0.92, +0.80] 500 Within − - SFT +0.10 [-0.80, +0.95] 500 Pooled cross − - SFT +0.72 [-0.25, +1.72] 500 Pooled cross − - Within +0.62 [-0.33, +1.62] 500 Coverage matched − - Pooled cross -0.28 [-1.27, +0.65] 499 Residualized − - Pooled cross -0.03 [-1.03, +0.95] 500 Held-out, k = 4 k{=}4 , three seeds Pooled cross − - Within +0.16 [-0.41, +0.72] 499 Held-out, k = 4 k{=}4 , re-collected Re-collected − - Pooled cross +0.13 [-0.85, +1.10] 500 Re-collected − - Within +0.75 [-0.10, +1.65] 500 Re-collected − - SFT +0.85 [-0.15, +1.85] 500 Held-out, k = 8 k{=}8 Pooled cross − - SFT +0.13 [-0.65, +0.92] strict pairs Within − - SFT -0.03 [-0.64, +0.59] strict pairs Pooled cross − - Within +0.25 [-0.48, +1.02] strict pairs Table 4: Doubling the held-out evaluation budget. Point estimates on the common-task basis, with
+the smallest detectable difference implied by each budget. Precision improved and every
+estimate moved toward zero. Held-out contrast k = 4 k{=}4 k = 8 k{=}8 Pooled cross − - Within +0.58 +0.25 Within − - SFT +0.16 -0.03 Pooled cross − - SFT — +0.13 Smallest detectable difference 1.19–1.42 0.88–1.14 Table 5: Harness effects under a second model family (untrained checkpoints; the 500 500 held-out SWE-bench Verified tasks, k = 4 k{=}4 under the minimal harness and k = 2 k{=}2 under Aider and
+SWE-agent; task-mean solve rates over the n n tasks gradeable in both cells of each row, which is why
+the Qwen3-8B column need not match Table 1 entry for entry). Harness
+effects are estimated within each model against that model’s own minimal-harness score, so they
+do not depend on the two models being equally strong. OpenHands and Qwen Code never produced a
+patch for Seed-Coder-8B: all 1,000 1{,}000 episodes under each ended in the harness error that
+Qwen3-8B meets on 61 61 of 1,000 1{,}000 OpenHands episodes and 287 287 of 999 999 Qwen Code episodes.
+Both cells are recorded as not measurable rather than scored zero. Seed-Coder-8B’s context limit is 32,768 32{,}768 tokens against 40,960 40{,}960 for Qwen3-8B; 32 32 of its 2,000 2{,}000 minimal-harness episodes overflowed and are scored as zeros. Harness Seed-Coder-8B Qwen3-8B Δ \Delta pp 95% CI n n weak-ReAct (minimal) 5.00 4.07 +0.93 [-0.22, +2.13] 500 Aider 0.62 2.59 -1.97 [-3.32, -0.83] 482 SWE-agent 0.60 4.03 -3.43 [-4.94, -2.12] 496 Gain of each real harness over the same model’s minimal harness Seed-Coder-8B, Aider -4.41 [-5.86, -3.06] 499 Seed-Coder-8B, SWE-agent -4.40 [-5.85, -3.05] 500 Qwen3-8B, Aider -1.42 [-3.08, +0.24] 482 Qwen3-8B, SWE-agent -0.07 [-1.63, +1.51] 496 Appendix E Training objectives The four RL arms train from the same frozen multi-harness trajectory manifest; the two controls
+alter the signal or its source (Base applies no update, SFT uses only successful trajectories
+under a supervised loss). The re-collected Cross arm of Appendix D shares
+everything below except the data for its second half. All four arms share identical data, tokenizer and chat template,
+token-faithful replay of engine-sampled ids, loss-masked observation tokens, a learning rate of 3 × 10 − 7 3\times 10^{-7} , KL coefficient 0.01 0.01 , one epoch, and a matched GPU-allocation budget, and each
+realized the same 81,200 81{,}200 optimizer steps (Table 7 ). Notation and the four credit-assignment rules. Write an episode as e = ( x , h , j ) e=(x,h,j) with
+task x x , harness h h and rollout index j j , sealed-oracle reward r e ∈ { 0 , 1 } r_{e}\in\{0,1\} , and let G ⁡ ( e ) G(e) be the advantage group e e belongs to. Within and PlainCross are the standard GRPO advantage [ Shao et al., 2024 ] under two group definitions; Coverage-matched and Resid change what
+enters the pooled group, in the spirit of the bias corrections proposed for single-harness
+training [ Liu et al., 2025b , Yu et al., 2025 ] . Within. Groups are formed inside a harness, G w ​ ( x , h , j ) = { ( x , h , j ′ ) : ∀ j ′ } G_{\mathrm{w}}(x,h,j)=\{(x,h,j^{\prime}):\forall j^{\prime}\} ,
+and the advantage is the group-standardized reward A e Within = r e − r ¯ G w ​ ( e ) σ G w ​ ( e ) + ε . A_{e}^{\mathrm{Within}}\;=\;\frac{r_{e}-\bar{r}_{G_{\mathrm{w}}(e)}}{\sigma_{G_{\mathrm{w}}(e)}+\varepsilon}. (8) Because every member shares a harness, any harness-level offset cancels by construction. PlainCross. Groups pool harnesses within a task, G c ( x , h , j ) = { ( x , h ′ , j ′ ) : ∀ h ′ , j ′ } G_{\mathrm{c}}(x,h,j)=\{(x,h^{\prime},j^{\prime}):\forall h^{\prime},j^{\prime}\} , and A e PlainCross A_{e}^{\mathrm{PlainCross}} is the same
+group-standardized reward over G c G_{\mathrm{c}} . The group mean now contains each harness’s own solve rate, which is the offset measured in
+Section 6 . Coverage-matched. PlainCross’s groups and advantages, with the number of traces carrying
+non-zero advantage subsampled down to Within’s count and the dropped traces retained at
+advantage zero. The two arms then update on the same number of traces, and the pooled
+comparison is unchanged on the traces that remain. Resid. A per-harness baseline is subtracted from the reward before the pooled
+standardization. The baseline for harness h h applied to task x x is the mean reward of h h over
+every other graded task, so a task’s own outcomes never enter the baseline used on it: b h ( − x ) = mean { r e ′ : h ( e ′ ) = h , x ( e ′ ) ≠ x } , z e = r e − b h ⁡ ( e ) ( − x ⁡ ( e ) ) , A e Resid = z e − z ¯ x σ x z + ε . \begin{gathered}b_{h}^{(-x)}\;=\;\operatorname{mean}\{\,r_{e^{\prime}}:h(e^{\prime})=h,\;x(e^{\prime})\neq x\,\},\qquad z_{e}=r_{e}-b_{h(e)}^{(-x(e))},\\
+A_{e}^{\mathrm{Resid}}\;=\;\frac{z_{e}-\bar{z}_{x}}{\sigma^{z}_{x}+\varepsilon}.\end{gathered} (9) The baseline is subtracted at unit coefficient, with no slope fitted. As assembled, the mean runs
+over the full graded pool of 1,008 1{,}008 tasks, most of them failed by every harness, while
+training used the 183 183 tasks on which harnesses disagree, so the baseline subtracted was
+9% of the offset present in the training population (Section 6 ). Table 9 also gives the slope of each arm’s advantage on the training-time
+harness solve rate; the out-of-fold classifier is the primary diagnostic. Base The untrained Qwen3-8B policy; anchor for all contrasts. SFT Supervised fine-tuning on the resolved trajectories of the same scaffolded
+collection (success-only distillation). This arm inherits the RL learning rate
+( 3 × 10 − 7 3\times 10^{-7} ) and the matched-compute budget, one to two orders of magnitude below a tuned
+distillation recipe, so it is a matched-hyperparameter ablation of the objective , not a tuned distillation
+recipe (cf. Pan et al., 2025 ). Within GRPO with advantage groups formed within a single harness. PlainCross GRPO with groups pooled across harnesses, the incumbent practice under
+study. Coverage-matched PlainCross with its non-zero-advantage trace count subsampled to
+Within’s. It tests whether Cross’s wider gradient support, rather than its comparison, carries
+any effect. Resid PlainCross with a leave-one-task-out per-harness baseline subtracted from the
+reward before standardization. Appendix F Harness and runtime version pins A paper arguing that harnesses must be reported as first-class variables has to report its own.
+Table 6 pins every harness [ Gauthier, 2024 , Wang et al., 2025a , Qwen Team, 2025a , Yang et al., 2024 ] , the
+minimal ReAct loop it is compared against [ Yao et al., 2023 ] , and the serving and grading
+runtime [ Kwon et al., 2023 , Jimenez et al., 2024 ] to an installed version. Table 6: Harness and runtime version pins (frozen for the whole campaign). Component Package Version Aider aider-chat 0.86.2 OpenHands openhands-sdk (V1 API) 1.0.0a6 openhands-ai (co-installed) 0.62.0 Qwen Code qwen-code 0.19.3 SWE-agent sweagent / swe-rex 1.1.0 / 1.4.0 weak-ReAct this work single-loop ReAct, released with the artifacts Serving vllm 0.8.5.post1 Training torch / transformers / verl 2.6.0 / 4.51.3 / 0.4.1 Grading oracle swebench / udocker 4.1.0 / 1.3.17 Appendix G Training corpus and regime Table 7: Training signal audit. All four arms replay the identical 81,216 81{,}216 -record manifest
+( 5,543 5{,}543 episodes over 183 183 tasks) and realize the same 81,200 81{,}200 logged optimizer
+steps, so nothing below reflects a difference in data exposure or update count. ESS is the mean effective-sample-size share of the importance-weighted replay, read from each
+arm’s training diagnostics; at 0.993 0.993 or above, with mean importance ratios between 0.996 0.996 and 0.999 0.999 , the replay was healthy in every arm. Groups follow each arm’s own
+grouping, one per task–harness pair for Within and one per task for the pooled family.
+Pooling leaves every task group with non-zero reward variance; splitting by harness pushes 55 % 55\% of Within’s groups into all-pass or all-fail degeneracy, which is its
+zero-advantage fraction. Coverage matching zeroes the same share of the pooled stream’s
+traces by construction. From results/postfreeze_2026q3/manifest_stats_crossed.json . arm groups non-zero var. adv. RMS zero-adv. % steps ESS Within 698 44.8% 0.670 55.1 81,200 0.996 Pooled cross 183 100.0% 1.000 0.0 81,200 0.995 Coverage-matched 183 100.0% 0.685 55.1 81,200 0.993 Residualized 183 100.0% 1.000 0.0 81,200 0.994 Source and disjointness. All training trajectories are collected on SWE-Gym [ Pan et al., 2025 ] tasks; every headline evaluation number in this paper is computed on
+SWE-bench Verified. The two benchmark families are disjoint by construction, so no evaluation
+task appears in any arm’s training data. Where the cross-harness signal lives. Pooled cross-harness GRPO can only carry gradient on tasks where the harnesses disagree, so that the pooled group has non-zero reward variance. If every harness fails a task, or every harness solves it, the group advantage is zero and the task contributes nothing to the pooled comparison, exactly as an all-correct or all-incorrect prompt does under single-harness GRPO [ Yu et al., 2025 ] . The variance here comes from harness identity rather than from sampling noise. The 183 183 emitted tasks are exactly this set, and the diagnostic of
+Section 6 is computed over them. Their training-time harness solve rates
+are Aider 6.9 % 6.9\% , SWE-agent 9.8 % 9.8\% , Qwen Code 20.9 % 20.9\% ,
+OpenHands 27.0 % 27.0\% . This spread is the harness offset the residualized arm was built to remove. Regime. The four arms train for a single epoch of offline replay over one frozen
+manifest with precomputed advantages, so there is no training-time reward curve; the
+non-zero-variance task count above plays that role. The re-collected arm
+(Appendix D ) is the exception and collects its second half of data on-policy. Table 8: Task-set registry. Training and evaluation draw from disjoint benchmark families,
+SWE-Gym for training and SWE-bench Verified for every reported number. Set Size Role Training pool SWE-Gym Source of all training trajectories; disjoint from SWE-bench Verified SFT corpus 186 tasks Resolved trajectories from the four harnesses, 8,841 8{,}841 records RL manifest 183 tasks Training tasks where the harnesses disagree; the only tasks carrying
+cross-harness advantage contrast (Appendix G ) Verified eval pool 500 SWE-bench Verified; every headline number in this paper Appendix H Detected infrastructure failure modes Each failure mode below was detected by a fail-closed check, fixed, and re-verified; each would
+otherwise have biased results silently. We list them because several would have increased apparent effects and none is specific to our stack. 1. Eval-container cross-condition contamination. Shared container stores let one
+condition’s edits leak into another’s evaluation. Fix: job-private container stores, created
+per rollout job. 2. Silent episode death (served-model race). A registration race returned 404s
+that were booked as permanent per-task skips, dropping ∼ 20 % {\sim}20\% of episodes in affected
+waves with no error raised, a non-random missingness pattern. Fix: registration-aware readiness probes,
+quarantine and re-collection of affected episodes. 3. Grading crashes as verdicts. UTF-8 strict-decode crashes in the grader were
+initially booked as infra errors, deflating denominators. Fix: replace-decoding plus the
+four-state verdict discipline (infra errors never enter statistics). 4. Container git corruption. Three modes (missing HEAD, damaged refs, truncated
+pack index, the last invisible to rev-parse ) made task repos unbuildable.
+Fix: in-container checkout verification and rebuilds. 5. Hollow image cache. A partially populated image cache made every collection job
+top out at the same 25 tasks, a uniform-looking but non-random truncation. Fix:
+cache-integrity preflight before any wave. Appendix I Harness identity in the advantage Table 9 reports the out-of-fold test of how much harness identity each arm’s
+advantage carries, on the training manifest the arms replayed. Table 9: Harness identity recoverable from the advantage, on the training manifest ( 183 183 tasks, 5,543 5{,}543 episodes). A classifier is trained out of fold on the advantage alone to
+recover the generating harness; tasks are hashed into five folds, chance is 25 % 25\% , and each
+arm is scored against its own permutation null from shuffling harness labels within task on
+the same folds. Excess is accuracy minus null, with a task-clustered 95 % 95\% bootstrap
+interval over 10,000 10{,}000 draws. Slope is the regression of the arm’s advantage on the
+training-time harness solve rate, the same raw-reward quantity for every arm. From results/postfreeze_2026q3/advantage_identity_crossed.json . arm OOF acc. (%) perm. null (%) excess (pp) 95% CI slope Within 26.41 26.39 +0.02 [-0.38, +0.46] -0.00 Coverage-matched 27.46 26.29 +1.17 [+0.20, +2.16] +0.94 Pooled cross 30.63 26.15 +4.48 [+3.22, +5.83] +2.38 Residualized 30.65 26.12 +4.54 [+3.24, +5.90] +2.05 Appendix J Action composition under each harness Every assistant turn in the evaluation transcripts behind Tables 1 and 2 is given one primary label by a rule-based parser (priority submit,
+edit, write, test, run, search, inspect, version control, planning tool, other), and each
+episode’s label shares are averaged over tasks. Compound shell commands take the highest-priority
+label, so a turn that edits and then runs the tests counts as an edit; under a multi-label count
+the test share on the held-out harness is 3.2 % 3.2\% for SFT and 2.9 % 2.9\% for Cross against the 0.6 % 0.6\% primary share of both. Aider is not covered: its transcript is plain chat with no tool
+calls or shell commands to label. Three tasks whose framework container wrote empty files into
+the working tree are included; excluding them moves no share by more than 0.2 ​ pp 0.2\,\mathrm{pp} . From results/postfreeze_2026q3/action_mix_v500.json . Table 10: Jensen–Shannon divergence between action distributions, in bits, with 95 % 95\% intervals from resampling tasks. Within-harness rows compare the SFT and Cross checkpoints
+under one harness on 500 500 paired tasks; across-harness rows give the range over the six
+harness pairs for one checkpoint. Comparison Harness or checkpoint JSD 95% CI SFT vs Cross, same harness weak-ReAct 0.0015 [0.0009, 0.0033] OpenHands 0.0029 [0.0016, 0.0077] Qwen Code 0.0005 [0.0004, 0.0027] SWE-agent 0.0003 [0.0003, 0.0029] Same checkpoint, harness pairs SFT 0.177–0.344 Cross 0.174–0.350 Appendix K Reported multi-harness results and what they identify The systems below differ in how much structure they add around the model: a single ReAct
+loop [ Yao et al., 2023 ] , retry-and-reflect and multi-agent designs [ Shinn et al., 2023 , Wu et al., 2023 ] , and the full frameworks pinned in
+Table 6 . They also differ in what their designs can identify, because each varies
+harness exposure together with the rest of its training recipe.
+OpenForgeRL reports held-out gains of + 9.5 +9.5 and + 20.3 ​ pp +20.3\,\mathrm{pp} under a three-harness recipe on
+ClawEval, a personal-assistant and tool-use benchmark rather than a software-engineering benchmark. The
+compared recipes vary the harnesses used for both SFT distillation and RL rollouts, so the
+marginal contribution of multi-harness RL is not isolated [ Yu and others, 2026 ] . Orchard’s
+SFT-only 2 × 2 2\times 2 shows strong full-harness lock-in ( 53.5 53.5 – 57.9 % 57.9\% matched versus 19.0 19.0 – 28.0 % 28.0\% mismatched). Its widely quoted 45.0 % 45.0\% under unseen Kimi-CLI is an absolute
+score from a bundled SFT recipe, not an isolated base-relative RL effect [ Peng and others, 2026 ] .
+Polar finds harness-native GRPO gains strongly harness-indexed ( + 0.6 +0.6 to + 22.6 ​ pp +22.6\,\mathrm{pp} ), each
+checkpoint evaluated on its own training harness [ Xu and others, 2026 ] . Appendix L Statistical protocol details Estimator. For each contrast, per-task solve indicators are averaged over rollouts, the
+paired per-task difference is bootstrapped by resampling tasks (10,000 draws, fixed seeds),
+and two-sided 95% percentile intervals are reported [ Efron and Tibshirani, 1994 ] . Resampling the
+task rather than the episode is the cluster-robust choice for repeated measurements on the same
+task [ Cameron and Miller, 2015 , Agarwal et al., 2021 ] . Multiplicity. The six held-out contrasts were ordered and frozen before the
+checkpoints existed, and the seen contrast carries a Bonferroni-corrected 99 % 99\% interval over
+the five recipe comparisons (Table 3 ) [ Holm, 1979 ] . Completeness gate. A
+cell enters analysis only at ≥ 95 % {\geq}95\% graded coverage. The analysis aborts (exit nonzero)
+rather than degrades below the gate. The source matrix attempted 24,000 episodes at
+99.1% verdict coverage, and the held-out rows reach 98.0 98.0 – 99.7 % 99.7\% at k = 4 k{=}4 and 98.6 98.6 – 99.3 % 99.3\% at k = 8 k{=}8 (Tables 1 and 2 ). Run variance. Identical reruns flip ∼ 6 % {\sim}6\% of per-task outcomes (continuous-batching nondeterminism, with
+episode seeds marking provenance rather than determinism), motivating k = 4 k{=}4 on the weak-ReAct probe and
+task-clustered paired inference throughout. A flat “ ± 6 ​ pp {\pm}6\,\mathrm{pp} ” discount would be wrong in
+both directions: the aggregate impact of rerun noise shrinks as ∼ 0.06 / n {\sim}\sqrt{0.06/n} with
+benchmark size, so what the flip rate rules out is specifically single-run, small- n n comparisons, not any difference under six points. Benchmark-level variance of this kind is well
+documented [ Bouthillier et al., 2021 , Madaan et al., 2024 , Miller, 2024 ] , as is the
+subset-selection effect that follows from it [ Dehghani et al., 2021 ] . Every reported number therefore uses the frozen 500 500 -task roster rather than any subset of
+it. Seed variation. Re-training Within and Cross under two further seeds moved each
+arm’s held-out level by 0.42 to 0.45 pp \,\mathrm{pp} (Table 2 );
+the pooled three-seed contrast is in Table 3 . Detection floors. MDE 80 figures recovered from the interval widths under a normal
+approximation are 1.19–1.42 pp \,\mathrm{pp} at k = 4 k{=}4 and 0.88–1.14 pp \,\mathrm{pp} at k = 8 k{=}8 (Table 4 ), and about 0.8 ​ pp 0.8\,\mathrm{pp} for the pooled three-seed contrast, so the nulls
+bound the effect from above without establishing equivalence [ Card et al., 2020 , Dodge et al., 2019 ] . Grading. The sealed oracle re-executes every candidate patch in a per-instance
+container against hidden tests disjoint from any feedback tests a harness shows the model. The
+gate experiment measured 2.58 % 2.58\% inline-vs-oracle disagreement (all optimistic), above the 1 % 1\% tolerance, freezing oracle-only reads for all reported numbers.
