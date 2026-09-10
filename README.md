@@ -13,7 +13,7 @@
 ## 来源与版本
 
 - 综述：Guanting Dong 等，*Towards Long-Horizon Agents: A Survey*，预印本 DOI [10.20944/preprints202607.1328.v1](https://doi.org/10.20944/preprints202607.1328.v1)，本地 PDF：`../long-horizon-1/sources/Towards_Long_Horizon_Agents_A_Survey.pdf`。
-- 配套仓库：[RUC-NLPIR/Awesome-Long-Horizon-Agents](https://github.com/RUC-NLPIR/Awesome-Long-Horizon-Agents)，固定快照 commit `084cafe83e3d10814ae0b63329bd10aa5945fd97`，访问日期 2026-09-10。
+- 配套仓库：[RUC-NLPIR/Awesome-Long-Horizon-Agents](https://github.com/RUC-NLPIR/Awesome-Long-Horizon-Agents)。
 - 本地快照数据：`../long-horizon-1/data/repository_catalog.csv`、`catalog_stats.json`、`primary_evidence.json`。仓库会继续更新，文中的数量只对上述 commit 有效。
 
 ## 如何使用
